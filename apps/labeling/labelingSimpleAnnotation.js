@@ -887,6 +887,11 @@ function changeROITypeValue(radio) {
     disableTIL();
     enableSaveBtn();
   }
+  // group 3: Test, just testing simple front end changes
+  if (radio.value=='Test') {
+    enableITS();
+    enableSaveBtn();
+  }
 }
 function disableSaveBtn() {
   const btn = document.getElementById('save');

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="keywords" content="camicroscope, quip" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <!-- common -->
+    <!-- <link rel='stylesheet' type='text/css' media='all' href='../../css/style.css'/> -->
+    <link
+      href="../../common/datatables/vanilla-dataTables.css"
+      rel="stylesheet"
+    />
+    <link href="../../iconfont/material-icons.css" rel="stylesheet" />
+    <!-- Check If we're logged in ok, otherwise, log in for us -->
+    <script src="../../common/authChecker.js"></script>
+    <script>
+      __auth_check(2);
+    </script>
+
+    <script src="../../core/Store.js"></script>
+    <script type="text/javascript" src="../../common/SHA256.js"></script>
+    <script src="../../common/util.js"></script>
+    <script src="../../common/ajv.js"></script>
+    <script src="../../common/datatables/vanilla-dataTables.js"></script>
+    <script src="../../components/loading/loading.js"></script>
+    <title>CaMicroscope Data Table</title>
+    <style type="text/css">
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      textarea,
+      select,
+      input[type="text"] {
+        font-family: "Lato", sans-serif;
+        border: 2px solid #95a5a6;
+        border-radius: 3px;
+        padding: 6px 12px;
+        line-height: 18px;
+      }
+
+      .container {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
+
+      /* CONTAINERS */
+      .dataTable-wrapper.no-header .dataTable-container {
+        border-top: 1px solid #d9d9d9;
+      }
+
+      .dataTable-wrapper.no-footer .dataTable-container {
+        border-bottom: 1px solid #d9d9d9;
+      }
+
+      .dataTable-top > div:first-child,
+      .dataTable-bottom > div:first-child {
+        float: left;
+      }
+
+      .dataTable-top > div:last-child,
+      .dataTable-bottom > div:last-child {
+        float: right;
+      }
+
+      .dataTable-selector {
+        padding: 6px;
+      }
+
+      .dataTable-input {
+        padding: 6px 12px;
+      }
+
+      .dataTable-info {
+        margin: 7px 0;
+      }
+
+      /* PAGER */
+      .dataTable-pagination ul {
+        margin: 0;
+        padding-left: 0;
+      }
+
+      .dataTable-pagination li {
+        list-style: none;
+        float: left;
+      }
+
+      .dataTable-pagination a {
+        border: 1px solid transparent;
+        float: left;
+        margin-left: 2px;
+        padding: 6px 12px;
+        position: relative;
+        text-decoration: none;
+        color: #333;
+      }
+
+      .dataTable-pagination a:hover {
+        background-color: #d9d9d9;
+      }
+
+      .dataTable-pagination .active a,
+      .dataTable-pagination .active a:focus,
+      .dataTable-pagination .active a:hover {
+        background-color: #d9d9d9;
+        cursor: default;
+      }
+
+      .dataTable-pagination .ellipsis a,
+      .dataTable-pagination .disabled a,
+      .dataTable-pagination .disabled a:focus,
+      .dataTable-pagination .disabled a:hover {
+        cursor: not-allowed;
+      }
+
+      .dataTable-pagination .disabled a,
+      .dataTable-pagination .disabled a:focus,
+      .dataTable-pagination .disabled a:hover {
+        cursor: not-allowed;
+        opacity: 0.4;
+      }
+
+      .dataTable-pagination .pager a {
+        font-weight: bold;
+      }
+
+      /* TABLE */
+      .dataTable-table {
+        max-width: 100%;
+        width: 100%;
+        border-spacing: 0;
+        border-collapse: collapse;
+      }
+
+      .dataTable-table > tbody > tr > td,
+      .dataTable-table > tbody > tr > th,
+      .dataTable-table > tfoot > tr > td,
+      .dataTable-table > tfoot > tr > th,
+      .dataTable-table > thead > tr > td,
+      .dataTable-table > thead > tr > th {
+        vertical-align: top;
+        padding: 8px 10px;
+      }
+
+      .dataTable-table > tbody > tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      .dataTable-table > tbody > tr:hover {
+        background-color: #ddd;
+      }
+
+      .dataTable-table > thead > tr > th {
+        color: white;
+        background-color: #365f9c;
+        vertical-align: bottom;
+        text-align: left;
+      }
+
+      .dataTable-table > tfoot > tr > th {
+        vertical-align: bottom;
+        text-align: left;
+        border-top: 1px solid #d9d9d9;
+      }
+
+      .dataTable-table th {
+        vertical-align: bottom;
+        text-align: left;
+      }
+
+      .dataTable-table th a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .dataTable-sorter {
+        display: inline-block;
+        height: 100%;
+        position: relative;
+        width: 100%;
+      }
+
+      .dataTable-sorter::before,
+      .dataTable-sorter::after {
+        content: "";
+        height: 0;
+        width: 0;
+        position: absolute;
+        right: 4px;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        opacity: 0;
+      }
+
+      .dataTable-sorter::before {
+        border-top: 4px solid #000;
+        bottom: 2px;
+      }
+
+      .dataTable-sorter::after {
+        border-bottom: 4px solid #000;
+        border-top: 4px solid transparent;
+        top: -2px;
+      }
+
+      .asc .dataTable-sorter::after,
+      .desc .dataTable-sorter::before {
+        opacity: 0.6;
+      }
+
+      .dataTables-empty {
+        text-align: center;
+      }
+
+      .dataTable-top::after,
+      .dataTable-bottom::after {
+        clear: both;
+        content: " ";
+        display: table;
+      }
+      .btn {
+        color: #fff;
+        background-color: #365f9c;
+        border-color: #365f9c;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        font-size: 1rem;
+        text-decoration: none;
+        border-radius: 0.25rem;
+        -webkit-transition: all 0.2s ease-in-out;
+        -o-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        opacity: 0.8;
+      }
+      .btnAdd {
+        color: #fff;
+        background-color: #2c7008;
+        border-color: #365f9c;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        font-size: 1rem;
+        text-decoration: none;
+        border-radius: 0.25rem;
+        -webkit-transition: all 0.2s ease-in-out;
+        -o-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        opacity: 0.8;
+      }
+      .btnRemove {
+        color: #fff;
+        background-color: #c64509;
+        border-color: #365f9c;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        font-size: 1rem;
+        text-decoration: none;
+        border-radius: 0.25rem;
+        -webkit-transition: all 0.2s ease-in-out;
+        -o-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        opacity: 0.8;
+      }
+      .btn:hover {
+        color: #fff;
+        background-color: #365f9c;
+        border-color: #365f9c;
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div>
+        <div style="width: 100%; height: 35px; background-color: #001871">
+          <div style="padding: 8px">
+            <a
+              style="
+                color: white;
+                text-decoration: none;
+                font-weight: 700;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                font-size: 0.9em;
+              "
+              href="../landing/landing.html"
+              >Home</a
+            >
+            &nbsp;&nbsp;&nbsp;
+            <a
+              style="
+                color: white;
+                text-decoration: none;
+                font-weight: 700;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                font-size: 0.9em;
+              "
+              href="../collection/viewer.html"
+              >Collection List</a
+            >
+            <a
+              style="
+                float: right;
+                color: rgb(134, 134, 134);
+                text-decoration: none;
+                font-weight: 700;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                font-size: 0.9em;
+              "
+              href="#"
+              onclick='googleSignOut("../../login.html?logout=true")'
+              >Sign Out</a
+            >
+          </div>
+        </div>
+        
+        <div>
+            <h1>Batch Creation or Addition</h1>
+            <div class="info">
+                <input type="text" id="batch_name" placeholder="Batch Name (new)">
+                <input type="text" id="batch_desc" placeholder="Batch Description">
+
+            <div>
+            <button id="submit" type="button"> Submit </button>
+            
+            <h2>Slides to be Added to Batch</h2>
+            <p id="batchcandidates"></p>
+        </div>
+          
+        <table id="datatables"></table>
+      </div>
+    </div>
+  </body>
+  <script>
+    // -- authentication check -- //
+    if (!hasLoginAsGoogle()) window.location = "../../login.html";
+
+    // Defining the table columns
+    const HeadMapping = [
+      {
+        title: "ID",
+        field: "_id",
+      },
+      {
+        title: "Name",
+        field: "name",
+      },
+      {
+        title: "Study",
+        field: "study",
+      },
+      {
+        title: "Specimen",
+        field: "specimen",
+      },
+      {
+        title: "MPP",
+        field: "mpp",
+      },
+      {
+        title: "ROIs",
+        field: "stat",
+      },
+    ];
+
+    // this variable is a set that will keep track of the slide ids as they are added or removed from the
+    // set (list) of slides that will be included in the new batch. 
+    // Using Set() so that there's no worry about accidental duplicates
+    let slidesToAdd = new Set([]);
+    
+    // Table set up. Modeled after ../labeling/labelingSimpleAnnotationViewer.html
+    const params = getUrlVars();
+    // Hardcoded the id value of the 'All Slides' collection 
+    const cid = '626343a74436adf36d17e59d';
+
+    async function initialize() {
+      const store = new Store("../../data/");
+      try {
+        const slides = await store.findSlideLabelingStat(cid, getUserId());
+        if (slides && Array.isArray(slides)) {
+          if (slides.length == 0) {
+            var div = document.querySelector("#datatables");
+            div.textContent = `No Data Found ... x _ x`;
+            return;
+          }
+
+          // Mapping values to the table
+          const keys = HeadMapping.map((d) => d.field);
+          const data = slides
+            .map((slide) => {
+              const rs = [];
+              const { labelingAnnotationCount, labelingCount } = slide.stat;
+              keys.forEach((key, i) => {
+                if (key == "stat") {
+                  rs.push(`${labelingAnnotationCount}/${labelingCount}`);
+                } else {
+                  rs.push(slide[key]);
+                }
+              });
+              
+              // Add a button, keeping track of the id which is the same as the slide id.
+              // Function that button activates changes, but starts off as addToBatch (defined below)
+              const batchBtn = `<button class="btnAdd" id='${rs[0]}'data-id='${rs[0]}' onclick='addToBatch(this)'>Add to batch list</button>`;
+              rs.push(batchBtn);
+              return rs;
+            })
+            .sort((a, b) => a[5] - b[5]);
+
+            const headings = HeadMapping.map((d) => d.title);
+            headings.push("");
+            dataTableInstance = new DataTable("#datatables", {
+                perPage: 50,
+                perPageSelect: [25, 50, 100],
+                data: { headings, data },
+            });
+
+        } else {
+          // error
+          alert(`There Is A Error On Server Side. (${slides})`);
+          window.location.href = "../collection/viewer.html";
+        }
+      } catch (error) {
+        alert(`There Is A Error On Server Side. (${error})`);
+        window.location.href = "../collection/viewer.html";
+      }
+    }
+
+    /*!
+     * This function is activated by batchBtn above. It adds the id of the html btn to the global set
+     * slidesToAdd. This set will be used to keep track of the slide ids that will be used in a new batch.
+     * It will change the onClick function of the button to removeFromBatch()
+     *
+     * @param {HTMLElement} e | the button that calls the function
+     *
+     */
+    function addToBatch(e){
+      // get ID of the button 
+      const oid = e.dataset.id;
+      if (oid) {
+
+        // this adds the slide id (same id as the button) to the set
+        slidesToAdd.add(oid)
+        // change the function to removeFromBatch
+        e.setAttribute( "onClick", "javascript: removeFromBatch(this)" );
+        // this will change the color of the button from green to red
+        e.classList.remove('btnAdd');
+        e.classList.add('btnRemove');
+        // this will change the text of the button
+        e.innerHTML = 'Remove from batch list';
+      } else {
+        alert("No Data Id");
+      }
+
+      // this adds the id to the list that is displayed to the user
+      document.getElementById("batchcandidates").textContent = (Array.from(slidesToAdd)).join(", ");
+
+    }
+
+
+    /**
+     * This function is activated by batchBtn above. It removes the id of the html btn from the global set
+     * slidesToAdd. This set will be used to keep track of the slide ids that will be used in a new batch.
+     * It will change the onClick function of the button to addToBatch()
+     *
+     * @param {HTMLElement} e | the button that calls the function
+     *
+     */
+    function removeFromBatch(e){
+      // get ID of the button 
+      const oid = e.dataset.id;
+      if (oid) {
+        // this deletes the slide id (same id as the button) from the set
+        slidesToAdd.delete(oid)
+        // change the function to addToBatch
+        e.setAttribute( "onClick", "javascript: addToBatch(this)" );
+        // this will change the color of the button from red to green
+        e.classList.remove('btnRemove');
+        e.classList.add('btnAdd');
+        // this will change the text of the button
+        e.innerHTML = 'Add to batch list';
+      } else {
+        alert("No Data Id");
+      }
+
+      // this removes the id from the list that is displayed to the user
+      document.getElementById("batchcandidates").textContent = (Array.from(slidesToAdd)).join(", ");
+
+    }
+
+    /*!
+     * This function uses the  the batch_name and batch_desc HTML
+     * elements to make a post request to the mongoDB to add a collection (batch) of that name and description.
+     * The function then calls processSlideIDs which will use the elements in the slidesToAdd set
+     *
+    */
+    async function addBatch() {
+
+        // get values in HTML text areas
+        const batch_name = document.getElementById('batch_name').value;
+        const batch_desc = document.getElementById('batch_desc').value;
+        
+        // The process below communicates with the mongoDB through a series of steps.
+        // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
+        const suffix = 'collection/addBatch';
+        const url = ' http://localhost:4010/data/' + suffix;
+        fetch(url, {
+            method: 'POST',
+            mode: 'cors',
+            body: JSON.stringify({
+                'name' : batch_name,
+                'description': batch_desc,
+            }),
+        }).then(res => 
+            res.json()
+        ).then(d =>
+            // use the object id returned by the post request, will correspond to the ObjectId of the 
+            // new collection in mongoDB
+            processSlideIDs(d.ops[0]._id)
+        );
+        alert( 'Batch \''+ batch_name + '\' has been created. Refresh the page to see new slides.');
+    }
+
+    /*!
+     * This function will iterate through all of the elements of the slidesToAdd global set
+     * It will call addSlideToDB on each element
+     *
+     * @param {string} batch | the unique id of the desired collection/batch in mongoDB
+    */
+    function processSlideIDs(batch){
+
+        //call addToBatch on every slideID found
+        for(let slide of slidesToAdd ){
+            addSlideToDB(batch, slide);
+        }
+    }
+
+    /**
+     * This function communicates with the mongoDB to add a copy of the slide specified by 'slide' 
+     * and adds it to the specified batch 
+     *
+     * @param {string} batch | the unique id of the desired collection/batch in mongoDB
+     * @param {string} slide | the unique id (in mongoDB) of the desired slide to be added 
+     * to the specified batch
+     * 
+     * 
+    */
+    function addSlideToDB(batch, slide) {
+
+     
+        // The process below communicates with the mongoDB through a series of steps.
+        // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
+        // This will duplicate the specified slides.
+        const suffix = 'testSandbox/dup';
+        const url = ' http://localhost:4010/data/' + suffix;
+        
+        // building the query request
+        const query = {
+            // id of the slide we want to duplicate
+            '_id': slide,
+            // name of the new batch created to which slide will be added
+            'batch' : batch,
+            // this was the hardcoded global collection id from above
+            'all_batch' : cid,
+        };
+
+        // run the actual request, in this case a GET
+        fetch(url + '?' + objToParamStr(query), {
+            method: 'GET',
+            credentials: 'include',
+            mode: 'cors',
+        }).then(res =>
+            // convert the return of fetch into json 
+            res.json()).then(d => {
+                // There is only one slide element in the json (of the same json form found in the slides 
+                // in mongoDB)
+                // we do forEach to apply the funcion to single slide element (item) 
+                d.forEach( function(item, index){
+                    // The process below communicates with the mongoDB through a series of steps.
+                    // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
+                    // THis will add the ROIs of the original slides to the new duplicate slide
+                    const suffix_2 = 'testSandbox/dupROIs';
+                    const url_2 = ' http://localhost:4010/data/' + suffix_2;
+                    
+                    // building the request with info that will be posted to the mongoDB
+                    // the fields below are the same ones that will be added in the mongoDB
+                    const query_2 = {
+                        // Id of the new (dupllicate) slide to which ROIS will be added
+                        'new_slide': item._id,
+                        // ID of the original slide from which ROIS will be copied
+                        'prev_slide_id' : item.prev_slide_id,
+                        // name of new batch specified by user, will be used to update 'creator' field of ROI
+                        'batch_name' : document.getElementById('batch_name').value,
+
+                    };
+                    fetch(url_2 + '?' + objToParamStr(query_2), {
+                        method: 'GET',
+                        credentials: 'include',
+                        mode: 'cors',
+                    })
+                }
+
+                )
+            })
+        
+    };
+
+    
+    document.addEventListener("DOMContentLoaded", initialize);
+    // Button to submit and trigger the actual submission process to the mongoDB
+    const submit = document.getElementById('submit');
+    submit.addEventListener('click', addBatch);
+  </script>
+</html>
