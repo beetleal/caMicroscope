@@ -608,11 +608,13 @@
           alert( 'Input batch description.');
           return;
         }
-        // if (collections.some(row => row.includes(batch_name))){
-        //   alert( 'Batch with inputted name already exists.');
-        //   return;
-        // }
-        // return;
+        //Checks to make sure that batch name doesn't already exist in collections list
+        for (var i = 0; i < collections.length; i++){
+          if (collections[i].name == batch_name){
+            alert( 'Batch with inputted name already exists.');
+            return;
+          }
+        }
         
         // The process below communicates with the mongoDB through a series of steps.
         // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
