@@ -401,10 +401,11 @@
             <div class="add_info">
                 <h3 id="h3">Add slides to existing batch</h3>
                 <div class="search-container">
-                  <input type="text" id="search_batch"> 
-                  <div class="suggestions" id = "suggestions">
-                    <ul></ul>
-                  </div>
+                  <select id="select_existing"></select>
+                  <!-- <input type="text" id="search_batch"> 
+                  <div class="suggestions" id = "suggestions"> -->
+                    <!-- <ul></ul>
+                  </div> -->
                 </div>
             </div>
             <button id="submit_existing" type="button"> Submit </button>
@@ -466,6 +467,16 @@
       try {
         const slides = await store.findSlideLabelingStat(cid, getUserId());
         collections = await store.getAllCollection();
+
+        //add existing batch options to dropdown
+        collections.forEach(c => {
+        var option = document.createElement("option");
+        option.value = c.name;
+        option.text = c.name;
+        // document.getElementById("h3").innerHTML = option;
+        selectList.appendChild(option);
+          // document.getElementById("h3").innerHTML = c.name;
+        });
 
         if (slides && Array.isArray(slides)) {
           if (slides.length == 0) {
@@ -597,6 +608,11 @@
           alert( 'Input batch description.');
           return;
         }
+        // if (collections.some(row => row.includes(batch_name))){
+        //   alert( 'Batch with inputted name already exists.');
+        //   return;
+        // }
+        // return;
         
         // The process below communicates with the mongoDB through a series of steps.
         // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
@@ -624,11 +640,14 @@
     */
     async function addToExistingBatch() {  
         // get values in HTML text areas
-        const batch_name = document.getElementById('search_batch').value;
-        if (batch_name == ""){
-          alert( 'Input batch name.');
-          return;
-        }
+        // const select = document.getElementById('select_existing');
+        // const batch_name = select.options[select.selectedIndex].text;
+      
+        const batch_name = document.getElementById('select_existing').value;
+        // if (batch_name == ""){
+        //   alert( 'Input batch name.');
+        //   return;
+        // }
 
         // The process below communicates with the mongoDB through a series of steps.
         // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
@@ -755,100 +774,111 @@
     /* This function allows the user to select an existing batch and add copies of slides to it
      * 
     */
-    const input = document.querySelector('#search_batch');
-    const suggestions = document.querySelector('.suggestions ul');
-    function searchExistingBatch(target){
-      // const store = new Store("../../data/");
-      // const pid = $(target).data('target');
-      // const pattern = target.value;
-      // const regex = new RegExp(pattern, 'gi');
+    // const input = document.querySelector('#search_batch');
+    // const suggestions = document.querySelector('.suggestions ul');
+    // function searchExistingBatch(target){
+    //   // const store = new Store("../../data/");
+    //   // const pid = $(target).data('target');
+    //   // const pattern = target.value;
+    //   // const regex = new RegExp(pattern, 'gi');
 
-      // $(`#${pid} li`).each((idx, li) => {
-      //   const text = $(li).find('.text-in-line').text();
-      //   if (text.match(regex)) {
-      //     $(li).show();
-      //     $(li).addClass('d-flex');
-      //   } else {
-      //     $(li).hide();
-      //     $(li).removeClass('d-flex');
-      //   }
-      // });
+    //   // $(`#${pid} li`).each((idx, li) => {
+    //   //   const text = $(li).find('.text-in-line').text();
+    //   //   if (text.match(regex)) {
+    //   //     $(li).show();
+    //   //     $(li).addClass('d-flex');
+    //   //   } else {
+    //   //     $(li).hide();
+    //   //     $(li).removeClass('d-flex');
+    //   //   }
+    //   // });
 
-      // var collections = store.getAllCollection(); //need await?
-      // document.getElementById("h3").innerHTML = "hi";
+    //   // var collections = store.getAllCollection(); //need await?
+    //   // document.getElementById("h3").innerHTML = "hi";
 
-      //TEST HERE
-      // let results = []
-      // //document.getElementById("h3").innerHTML = collections[9].name;
-      // collections.forEach(c => {
-      //     results.push(c.name);
-      //     // document.getElementById("h3").innerHTML = c.name;
-      // });
-      // document.getElementById("h3").innerHTML = results;
-      //
+    //   //TEST HERE
+    //   // let results = []
+    //   // //document.getElementById("h3").innerHTML = collections[9].name;
+    //   // collections.forEach(c => {
+    //   //     results.push(c.name);
+    //   //     // document.getElementById("h3").innerHTML = c.name;
+    //   // });
+    //   // document.getElementById("h3").innerHTML = results;
+    //   //
 
-      // if (data.length == 0) {
-      //       var div = document.querySelector("#suggestions");
-      //       div.textContent = `No Existing Batch. Create a new batch`;
-      //       return;
-      // }
-      let results_arr = []
-      const val = target.value.toLowerCase();
-      collections.forEach(c => {
-          if (c.name.toLowerCase().indexOf(val) > -1){
-            results_arr.push(c.name);
-          }
-          // document.getElementById("h3").innerHTML = c.name;
-      });
-      return results_arr;
+    //   // if (data.length == 0) {
+    //   //       var div = document.querySelector("#suggestions");
+    //   //       div.textContent = `No Existing Batch. Create a new batch`;
+    //   //       return;
+    //   // }
+    //   let results_arr = []
+    //   const val = target.value.toLowerCase();
+    //   collections.forEach(c => {
+    //       if (c.name.toLowerCase().indexOf(val) > -1){
+    //         results_arr.push(c.name);
+    //       }
+    //       // document.getElementById("h3").innerHTML = c.name;
+    //   });
+    //   return results_arr;
 
-      // let results = []
-      // const val = str.toLowerCase();
+    //   // let results = []
+    //   // const val = str.toLowerCase();
 
-      // for (i=0;i<data.length;i++){
-      //   if (data[i].toLowerCase().indexOf(val) > -1){
-      //     results.push(data[i])
-      //   }
-      // }
-      // return results;
-      // return results[0]
-    }
-    function searchHandler(e){
-      // let inputVal = document.getElementById('search_batch')//$('#search_batch').val();
-      // const inputVal = e.currentTarget.value;
-      const inputVal = e.currentTarget;
-      // document.getElementById("h3").innerHTML = inputVal;
-      let results = [];
-      if (inputVal.value.length > 0){
-        results = searchExistingBatch(inputVal);
-      }
-      // document.getElementById("h3").innerHTML = results;
-      showSuggestions(results)
-    }
-    function showSuggestions(results){
-      suggestions.innerHTML = "";
-        if (results.length>0){
-          for(i=0; i<results.length;i++){
-            let item = results[i];
-            // const match = item.match(new RegExp(inputVal.value, 'i'));
-            // item = item.replace(match[0], '<strong>${match[0]}</strong>');
-            suggestions.innerHTML += "<li>" + item + "</li>";
-          }
-          suggestions.classList.add('has-suggestions');
-        }
-        else{
-          results=[];
-          suggestions.innerHTML = "";
-          suggestions.classList.remove('has-suggestions');
-        }
-      // suggestions.innerHTML = '<li>${item}</li>';
-    }
-    function useSuggestion(e){
-      input.value = e.target.innerText;
-      input.focus();
-      suggestions.innerHTML = "";
-      suggestions.classList.remove('has-suggestions');
-    }
+    //   // for (i=0;i<data.length;i++){
+    //   //   if (data[i].toLowerCase().indexOf(val) > -1){
+    //   //     results.push(data[i])
+    //   //   }
+    //   // }
+    //   // return results;
+    //   // return results[0]
+    // }
+    // function searchHandler(e){
+    //   // let inputVal = document.getElementById('search_batch')//$('#search_batch').val();
+    //   // const inputVal = e.currentTarget.value;
+    //   const inputVal = e.currentTarget;
+    //   // document.getElementById("h3").innerHTML = inputVal;
+    //   let results = [];
+    //   if (inputVal.value.length > 0){
+    //     results = searchExistingBatch(inputVal);
+    //   }
+    //   // document.getElementById("h3").innerHTML = results;
+    //   showSuggestions(results)
+    // }
+    // function showSuggestions(results){
+    //   suggestions.innerHTML = "";
+    //     if (results.length>0){
+    //       for(i=0; i<results.length;i++){
+    //         let item = results[i];
+    //         // const match = item.match(new RegExp(inputVal.value, 'i'));
+    //         // item = item.replace(match[0], '<strong>${match[0]}</strong>');
+    //         suggestions.innerHTML += "<li>" + item + "</li>";
+    //       }
+    //       suggestions.classList.add('has-suggestions');
+    //     }
+    //     else{
+    //       results=[];
+    //       suggestions.innerHTML = "";
+    //       suggestions.classList.remove('has-suggestions');
+    //     }
+    //   // suggestions.innerHTML = '<li>${item}</li>';
+    // }
+    // function useSuggestion(e){
+    //   input.value = e.target.innerText;
+    //   input.focus();
+    //   suggestions.innerHTML = "";
+    //   suggestions.classList.remove('has-suggestions');
+    // }
+
+    // function searchExisting(){
+    //   collections.forEach(c => {
+    //     var option = document.createElement("option");
+    //     option.value = c.name;
+    //     option.text = c.name;
+    //     // document.getElementById("h3").innerHTML = option;
+    //     selectList.appendChild(option);
+    //       // document.getElementById("h3").innerHTML = c.name;
+    //   });
+    // }
     
     document.addEventListener("DOMContentLoaded", initialize);
     // Button to submit and trigger the actual submission process to the mongoDB
@@ -857,7 +887,8 @@
 
     //ANNETTE ADDITIONS
     // input.addEventListener('keyup', searchHandler);
-    const search_input = document.getElementById('search_batch');
+    const selectList = document.getElementById('select_existing');
+    // const search_input = document.getElementById('search_batch');
     // if (search_input.value == ""){
     //   //show all existing batches under "Add slides to existing batch"
     //   let sug = []
@@ -866,8 +897,9 @@
     //     });  
     //     showSuggestions(sug);
     // }
-    search_input.addEventListener('input', searchHandler);
-    suggestions.addEventListener('click', useSuggestion);
+    // selectList.addEventListener('click', searchExisting);
+    // search_input.addEventListener('input', searchHandler);
+    // suggestions.addEventListener('click', useSuggestion);
     const submit_existing = document.getElementById('submit_existing');
     submit_existing.addEventListener('click', addToExistingBatch);
   </script>
