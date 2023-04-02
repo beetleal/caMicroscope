@@ -128,6 +128,12 @@
         border-color: #1e7e34;
       }
 
+      .card-actions .btn.close {
+        color: #fff;
+        background-color: rgb(194, 2, 2);
+        border-color: rgb(194, 2, 2);
+      }
+
       .card-actions .btn.action {
         color: #fff;
         background-color: #007bff;
@@ -228,14 +234,16 @@
         } ${d.name}</div>
             <div class='card-description'>${d.description}</div>
             <div class='card-actions'>
-                <button class='btn action' style='float: left;display:none;'>ROIs Collection</button>
+                <button class='btn close' style='float: left;'>Delete Batch</button>
                 <button class='btn action' style='float: right;'>
                   ROIs Evaluation
                 </button>
             </div>`;
         const btns = card.querySelectorAll("button");
         btns[0].addEventListener("click", (e) => {
-          window.location.href = `../table.html`;
+          // Pop up window with confirmation message of whether or not to delete
+          
+          // window.location.href = `../table.html`;
           // redirect('../table.html', e.message, 0);
         });
         btns[1].addEventListener("click", (e) => {

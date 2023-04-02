@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Experiment</title>
+        <style>
+            .container {
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                width: 100%;
+                height: 100%;
+                padding: 0;
+                margin: 0;
+            }
+            .welcome {
+                background-image: url('./welcome.jpeg');
+                background-size: cover;
+                background-repeat: no-repeat;
+                text-align: center;
+                line-height: 450px;
+                width: 100%;
+                height: 450px;
+                font-size: 40px;
+                padding: 0;
+            }
+            .info {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div style="width: 100%; height: 35px; background-color: #001871">
+                <div style="padding: 8px">
+                  <a
+                    style="
+                      color: white;
+                      text-decoration: none;
+                      font-weight: 700;
+                      letter-spacing: 0.05em;
+                      text-transform: uppercase;
+                      font-size: 0.9em;
+                    "
+                    href="../landing/landing.html"
+                    >Home</a>
+                    <a
+                    style="
+                        float: right;
+                        color: rgb(134, 134, 134);
+                        text-decoration: none;
+                        font-weight: 700;
+                        letter-spacing: 0.05em;
+                        text-transform: uppercase;
+                        font-size: 0.9em;
+                    "
+                    href="#"
+                    onclick='googleSignOut("../../login.html?logout=true")'
+                    >Sign Out</a>
+            </div>
+        </div>
+            
+        </div>
+        <div class="welcome">
+            <h1>Welcome</h1>
+        </div>
+        <div class="info">
+            <p>We appreciate your participation in our reader study.</p>
+            <p>Please enter your readerID</p>
+            <input type="text" id="readerID" placeholder="readerID">
+            <button id="submit" type="button" onclick="location.href='./experiment.html';"> Next </button>
+        </div>
+    </body>
+    <script>
+        const submit = document.getElementById('submit');
+        submit.addEventListener('click', addBatch);
+    </script>
+</html>
