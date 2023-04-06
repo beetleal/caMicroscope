@@ -257,6 +257,33 @@
         border-color: #365f9c;
         opacity: 1;
       }
+      .delete_btn {
+        color: #fff;
+        background-color: rgb(194, 2, 2);
+        border-color: rgb(194, 2, 2);
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border: 1px solid transparent;
+        font-size: 1rem;
+        text-decoration: none;
+        border-radius: 0.25rem;
+        -webkit-transition: all 0.2s ease-in-out;
+        -o-transition: all 0.2s ease-in-out;
+        transition: all 0.2s ease-in-out;
+        opacity: 0.8;
+      }
+      .delete_btn:hover {
+        color: #fff;
+        background-color: rgb(194, 2, 2);
+        border-color: rgb(194, 2, 2);
+        opacity: 1;
+      }
     </style>
   </head>
   <body>
@@ -391,7 +418,7 @@
               const btn =
                 labelingAnnotationCount == labelingCount
                   ? `<div class='material-icons' style='width:48px;color:#008000;' title='Done'>check_circle</div>`
-                  : `<button class="btn" data-id='${rs[0]}' onclick='openView(this)'>Open</button>`;
+                  : `<button class="btn" data-id='${rs[0]}' onclick='openView(this)'>Open</button> <button class="delete_btn" data-id='${rs[0]}' onclick='deleteSlide(this)'>Delete</button>`;
               rs.push(btn);
               return rs;
             })
@@ -439,6 +466,19 @@
       const oid = e.dataset.id;
       if (oid) {
         window.location.href = `./roi_pick.html?slideId=${oid}&collectionId=${cid}`;
+      } else {
+        alert("No Data Id");
+      }
+    }
+
+    function deleteSlide(e) {
+      const oid = e.dataset.id;
+      if (oid) {
+        if (confirm("Are you sure you want to delete this slide from this batch?")) //returns true if user clicked OK
+        {
+          
+          //delete slide
+        }
       } else {
         alert("No Data Id");
       }

@@ -11,7 +11,7 @@
                 margin: 0;
             }
             .welcome {
-                background-image: url('./welcome.jpeg');
+                background-image: url('./background.jpeg');
                 background-size: cover;
                 background-repeat: no-repeat;
                 text-align: center;
@@ -63,13 +63,10 @@
         </div>
         <div class="info">
             <p>We appreciate your participation in our reader study.</p>
-            <p>Please enter your readerID</p>
-            <input type="text" id="readerID" placeholder="readerID">
-            <button id="submit" type="button" onclick="location.href='./experiment.html';"> Next </button>
+            <p>Please enter the email of the participant.</p>
+            <input type="text" id="email">
+            <button id="submit" type="button"> Next </button>
         </div>
     </body>
-    <script>
-        const submit = document.getElementById('submit');
-        submit.addEventListener('click', addBatch);
-    </script>
+    <script type="text/javascript" src="./welcome.js"></script>
 </html>

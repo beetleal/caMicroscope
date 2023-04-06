@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="keywords" content="camicroscope, quip" />
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+        <!-- common -->
+        <!-- <link rel='stylesheet' type='text/css' media='all' href='../../css/style.css'/> -->
+        <link
+        href="../../common/datatables/vanilla-dataTables.css"
+        rel="stylesheet"
+        />
+        <link href="../../iconfont/material-icons.css" rel="stylesheet" />
+        
+        <script src="../../core/Store.js"></script>
+        <script type="text/javascript" src="../../common/SHA256.js"></script>
+        <script src="../../common/util.js"></script>
+        <script src="../../common/ajv.js"></script>
+        <script src="../../common/datatables/vanilla-dataTables.js"></script>
+        <script src="../../components/loading/loading.js"></script>
+
+        <title>Create Test</title>
+        <style type="text/css">
+            html,
+            body {
+              margin: 0;
+              padding: 0;
+              height: 100%;
+              width: 100%;
+            }
+      
+            textarea,
+            select,
+            input[type="text"] {
+              font-family: "Lato", sans-serif;
+              border: 2px solid #95a5a6;
+              border-radius: 3px;
+              padding: 6px 12px;
+              line-height: 18px;
+            }
+      
+            .container {
+              font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+              width: 100%;
+              height: 100%;
+              padding: 0;
+              margin: 0;
+            }
+
+            .choose_test {
+              padding-left: 10px;
+            }
+      
+            /* CONTAINERS */
+            .dataTable-wrapper.no-header .dataTable-container {
+              border-top: 1px solid #d9d9d9;
+            }
+      
+            .dataTable-wrapper.no-footer .dataTable-container {
+              border-bottom: 1px solid #d9d9d9;
+            }
+      
+            .dataTable-top > div:first-child,
+            .dataTable-bottom > div:first-child {
+              float: left;
+            }
+      
+            .dataTable-top > div:last-child,
+            .dataTable-bottom > div:last-child {
+              float: right;
+            }
+      
+            .dataTable-selector {
+              padding: 6px;
+            }
+      
+            .dataTable-input {
+              padding: 6px 12px;
+            }
+      
+            .dataTable-info {
+              margin: 7px 0;
+            }
+      
+            /* PAGER */
+            .dataTable-pagination ul {
+              margin: 0;
+              padding-left: 0;
+            }
+      
+            .dataTable-pagination li {
+              list-style: none;
+              float: left;
+            }
+      
+            .dataTable-pagination a {
+              border: 1px solid transparent;
+              float: left;
+              margin-left: 2px;
+              padding: 6px 12px;
+              position: relative;
+              text-decoration: none;
+              color: #333;
+            }
+      
+            .dataTable-pagination a:hover {
+              background-color: #d9d9d9;
+            }
+      
+            .dataTable-pagination .active a,
+            .dataTable-pagination .active a:focus,
+            .dataTable-pagination .active a:hover {
+              background-color: #d9d9d9;
+              cursor: default;
+            }
+      
+            .dataTable-pagination .ellipsis a,
+            .dataTable-pagination .disabled a,
+            .dataTable-pagination .disabled a:focus,
+            .dataTable-pagination .disabled a:hover {
+              cursor: not-allowed;
+            }
+      
+            .dataTable-pagination .disabled a,
+            .dataTable-pagination .disabled a:focus,
+            .dataTable-pagination .disabled a:hover {
+              cursor: not-allowed;
+              opacity: 0.4;
+            }
+      
+            .dataTable-pagination .pager a {
+              font-weight: bold;
+            }
+      
+            /* TABLE */
+            .dataTable-table {
+              max-width: 100%;
+              width: 100%;
+              border-spacing: 0;
+              border-collapse: collapse;
+            }
+      
+            .dataTable-table > tbody > tr > td,
+            .dataTable-table > tbody > tr > th,
+            .dataTable-table > tfoot > tr > td,
+            .dataTable-table > tfoot > tr > th,
+            .dataTable-table > thead > tr > td,
+            .dataTable-table > thead > tr > th {
+              vertical-align: top;
+              padding: 8px 10px;
+            }
+      
+            .dataTable-table > tbody > tr:nth-child(even) {
+              background-color: #f2f2f2;
+            }
+      
+            .dataTable-table > tbody > tr:hover {
+              background-color: #ddd;
+            }
+      
+            .dataTable-table > thead > tr > th {
+              color: white;
+              background-color: #365f9c;
+              vertical-align: bottom;
+              text-align: left;
+            }
+      
+            .dataTable-table > tfoot > tr > th {
+              vertical-align: bottom;
+              text-align: left;
+              border-top: 1px solid #d9d9d9;
+            }
+      
+            .dataTable-table th {
+              vertical-align: bottom;
+              text-align: left;
+            }
+      
+            .dataTable-table th a {
+              text-decoration: none;
+              color: inherit;
+            }
+      
+            .dataTable-sorter {
+              display: inline-block;
+              height: 100%;
+              position: relative;
+              width: 100%;
+            }
+      
+            .dataTable-sorter::before,
+            .dataTable-sorter::after {
+              content: "";
+              height: 0;
+              width: 0;
+              position: absolute;
+              right: 4px;
+              border-left: 4px solid transparent;
+              border-right: 4px solid transparent;
+              opacity: 0;
+            }
+      
+            .dataTable-sorter::before {
+              border-top: 4px solid #000;
+              bottom: 2px;
+            }
+      
+            .dataTable-sorter::after {
+              border-bottom: 4px solid #000;
+              border-top: 4px solid transparent;
+              top: -2px;
+            }
+      
+            .asc .dataTable-sorter::after,
+            .desc .dataTable-sorter::before {
+              opacity: 0.6;
+            }
+      
+            .dataTables-empty {
+              text-align: center;
+            }
+      
+            .dataTable-top::after,
+            .dataTable-bottom::after {
+              clear: both;
+              content: " ";
+              display: table;
+            }
+            .btn {
+              color: #fff;
+              background-color: #365f9c;
+              border-color: #365f9c;
+              display: inline-block;
+              text-align: center;
+              white-space: nowrap;
+              vertical-align: middle;
+              -webkit-user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+              user-select: none;
+              border: 1px solid transparent;
+              font-size: 1rem;
+              text-decoration: none;
+              border-radius: 0.25rem;
+              -webkit-transition: all 0.2s ease-in-out;
+              -o-transition: all 0.2s ease-in-out;
+              transition: all 0.2s ease-in-out;
+              opacity: 0.8;
+            }
+            .btnAdd {
+              color: #fff;
+              background-color: #2c7008;
+              border-color: #365f9c;
+              display: inline-block;
+              text-align: center;
+              white-space: nowrap;
+              vertical-align: middle;
+              -webkit-user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+              user-select: none;
+              border: 1px solid transparent;
+              font-size: 1rem;
+              text-decoration: none;
+              border-radius: 0.25rem;
+              -webkit-transition: all 0.2s ease-in-out;
+              -o-transition: all 0.2s ease-in-out;
+              transition: all 0.2s ease-in-out;
+              opacity: 0.8;
+            }
+            .btnRemove {
+              color: #fff;
+              background-color: #c64509;
+              border-color: #365f9c;
+              display: inline-block;
+              text-align: center;
+              white-space: nowrap;
+              vertical-align: middle;
+              -webkit-user-select: none;
+              -moz-user-select: none;
+              -ms-user-select: none;
+              user-select: none;
+              border: 1px solid transparent;
+              font-size: 1rem;
+              text-decoration: none;
+              border-radius: 0.25rem;
+              -webkit-transition: all 0.2s ease-in-out;
+              -o-transition: all 0.2s ease-in-out;
+              transition: all 0.2s ease-in-out;
+              opacity: 0.8;
+            }
+            .btn:hover {
+              color: #fff;
+              background-color: #365f9c;
+              border-color: #365f9c;
+              opacity: 1;
+            }
+            .search-container {
+              width: 400px;
+              position:relative;
+              margin-left: 2px;
+            }
+            .search-container input,
+            .search-container .suggestions{
+              width: 100%;
+              background: #fff;
+              text-align: left;
+            }
+            .search-container .suggestions{
+              position: relative;
+            }
+            ul{
+              display: none;
+              list-style-type: none;
+              padding: 0;
+              margin: 0;
+              max-height: 200px;
+              overflow-y: auto;
+            }
+            ul.has-suggestions{
+              display: block;
+            }
+            ul li{
+              padding: 10px;
+              cursor: pointer;
+              border: 1px solid black;
+            }
+            ul li:hover{
+              background-color: gray;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div>
+                <div class="choose_test">
+                    <h1>Continue a Previous Test or Create a New Test</h1>
+                    <div class="continue_test">
+                      <h2>Continue a Previous Test</h2>
+                      <div class="search-container">
+                        <input type="text" id="search_batch"> 
+                        <div class="suggestions" id = "suggestions">
+                          <ul></ul>
+                        </div>
+                      </div>
+                      <!-- add a check to see if it's a valid previous test that's not been finished yet. -->
+                    </div>
+                    <button id="previous" type="button"> Continue </button><br><br> 
+                    <div class="create_test">
+                      <h2>Create a New Test</h2>
+                      <input type="text" id="test_name" placeholder="Test Name (new)">
+                    </div>
+                    <button id="new" type="button"> Create</button>
+
+                    <h3>Batches to be added to new test:</h3>
+                    <p id="testcandidates"></p>
+                    <br><br>
+                </div>
+                <!-- <div class="info">
+                    <button id="new" type="button"> Create New </button><br><br><br>
+                </div> -->
+                <table id="datatables"></table>
+            </div>
+        </div>
+
+    </body>
+    <!-- <script type="text/javascript" src="./create_test.js"></script> -->
+    <script>
+        // this variable is a set that will keep track of the batch ids as they are added or removed from the
+        // set (list) of batches that will be included in the test. 
+        // Using Set() so that there's no worry about accidental duplicates
+        let batchesToAdd = new Set([]);
+
+        // Defining the table columns
+        const HeadMapping = [
+            {
+                title: "Batch Name",
+                field: "name",
+            },
+            {
+                title: "Description",
+                field: "description",
+            },
+        ];
+            
+        // Table set up. Modeled after ../labeling/labelingSimpleAnnotationViewer.html
+        const params = getUrlVars();
+
+        async function initialize() {
+            const store = new Store("../../data/"); 
+            try {
+                var collection_list = await store.getAllCollection();
+                if (collection_list && Array.isArray(collection_list)) {
+                    if (collection_list.length == 0) {
+                        var div = document.querySelector("#datatables");
+                        div.textContent = `No Data Found ... x _ x`;
+                        return;
+                    }
+                    const headings = HeadMapping.map((d) => d.title);
+                    headings.push("");
+                    const data = collection_list.map((batch) => {
+                        const rs = [];
+                        rs.push(batch.name);
+                        rs.push(batch.description);
+
+                        // Add a button, keeping track of the id which is the same as the batch id.
+                        // Function that button activates changes, but starts off as addToTest (defined below)
+                        const testBtn = `<button class="btnAdd" id='${rs[0]}'data-id='${rs[0]}' onclick='addToTest(this)' style='float:right'>Add to test list</button>`;
+                        rs.push(testBtn);
+                        return rs;
+                    });
+                    dataTableInstance = new DataTable("#datatables", {
+                        perPage: 50,
+                        perPageSelect: [25, 50, 100],
+                        data: { headings, data },
+                    });
+                    // data.forEach((d) => {
+                }
+                else {
+                    console.log(slides);
+                    // error
+                    alert(`There Is A Error On Server Side. (${slides})`);
+                    // window.location.href = "../collection/viewer.html";
+                }
+            }
+            catch (error) {
+                alert(`There Is A Error On Server Side. (${error})`);
+                // window.location.href = "../collection/viewer.html";
+            }
+        }
+
+        /*!
+        * This function is activated by testBtn above. It adds the id of the html btn to the global set
+        * batchesToAdd. This set will be used to keep track of the batch ids that will be used in a new test.
+        * It will change the onClick function of the button to removeFromBatch()
+        *
+        * @param {HTMLElement} e | the button that calls the function
+        *
+        */
+        function addToTest(e){
+        // get ID of the button 
+        const oid = e.dataset.id;
+        if (oid) {
+
+            // this adds the batch id (same id as the button) to the set
+            batchesToAdd.add(oid)
+            // change the function to removeFromBatch
+            e.setAttribute( "onClick", "javascript: removeFromTest(this)" );
+            // this will change the color of the button from green to red
+            e.classList.remove('btnAdd');
+            e.classList.add('btnRemove');
+            // this will change the text of the button
+            e.innerHTML = 'Remove from test list';
+        } else {
+            alert("No Data Id");
+        }
+
+        // this adds the id to the list that is displayed to the user
+        document.getElementById("testcandidates").textContent = (Array.from(batchesToAdd)).join(", ");
+
+        }
+
+        /**
+         * This function is activated by testBtn above. It removes the id of the html btn from the global set
+         * batchesToAdd. This set will be used to keep track of the batch ids that will be used in a new test.
+         * It will change the onClick function of the button to addToTest()
+         *
+         * @param {HTMLElement} e | the button that calls the function
+         *
+         */
+        function removeFromTest(e){
+        // get ID of the button 
+        const oid = e.dataset.id;
+        if (oid) {
+            // this deletes the batch id (same id as the button) from the set
+            batchesToAdd.delete(oid)
+            // change the function to addToTest
+            e.setAttribute( "onClick", "javascript: addToTest(this)" );
+            // this will change the color of the button from red to green
+            e.classList.remove('btnRemove');
+            e.classList.add('btnAdd');
+            // this will change the text of the button
+            e.innerHTML = 'Add to test list';
+        } else {
+            alert("No Data Id");
+        }
+
+        // this removes the id from the list that is displayed to the user
+        document.getElementById("testcandidates").textContent = (Array.from(batchesToAdd)).join(", ");
+        }
+
+        /*!
+        * This function uses the batch_name and batch_desc HTML
+        * elements to make a post request to the mongoDB to add a collection (batch) of that name and description.
+        * The function then calls processSlideIDs which will use the elements in the slidesToAdd set
+        *
+        */
+        async function createTest() {
+
+            // get value in HTML text area
+            const test_name = document.getElementById('test_name').value;
+
+            if (test_name == ""){
+                alert( 'Input test name.');
+                return;
+            }
+            
+            //Checks to make sure that test name doesn't already exist in tests list 
+            // for (var i = 0; i < collections.length; i++){
+            //     if (collections[i].name == batch_name){
+            //         alert( 'Batch with inputted name already exists.');
+            //         return;
+            //     }
+            // }
+
+            // The process below communicates with the mongoDB through a series of steps.
+            // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
+            // const suffix = 'experiment/addTest'; // TODO: create this path
+            // const url = ' http://localhost:4010/data/' + suffix;
+            // fetch(url, {
+            //     method: 'POST',
+            //     mode: 'cors',
+            //     body: JSON.stringify({
+            //         'name' : test_name,
+            //     }),
+            // }).then(res => 
+            //     res.json()
+            // ).then(d =>
+            //     // use the object id returned by the post request, will correspond to the ObjectId of the 
+            //     // new test in mongoDB
+            //     processBatchIDs(d.ops[0]._id)
+            // );
+            alert( 'Test \''+ test_name + '\' has been created. Refresh the page to see new batches.');
+        }
+
+        /*!
+        * This function will iterate through all of the elements of the batchesToAdd global set
+        * It will call addBatchToDB on each element
+        *
+        * @param {string} test | the unique id of the desired test in mongoDB
+        */
+        function processBatchIDs(test){
+            //call addToTest on every batchID found
+            for(let batch of batchesToAdd ){
+                addBatchToDB(test, batch);
+            }
+        }
+
+        /**
+         * This function communicates with the mongoDB to add the batch specified by 'batch' 
+         * and adds it to the specified test 
+         *
+         * @param {string} test | the unique id of the desired test in mongoDB
+         * @param {string} batch | the unique id (in mongoDB) of the desired batch to be added 
+         * to the specified test
+         * 
+         * 
+        */
+        function addBatchToDB(test, batch) {
+
+            // The process below communicates with the mongoDB through a series of steps.
+            // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
+            // This will duplicate the specified slides. 
+            // NOTE: TODO: ABOVE IS INCORRECT FOR THIS!!!!!!!!!! NOT DUPLICATING, JUST ADDING THE BATCH TO THE TEST
+            // const suffix = 'experiment/add';
+            // const url = ' http://localhost:4010/data/' + suffix;
+
+            // // building the query request
+            // const query = {
+            //     // id of the batch we want to add
+            //     '_id': batch,
+            //     // name of the new test created to which batch will be added
+            //     'test' : test,
+            //     // // this was the hardcoded global collection id from above
+            //     // 'all_batch' : cid,
+            // };
+
+            // // run the actual request, in this case a GET
+            // fetch(url + '?' + objToParamStr(query), {
+            //     method: 'GET',
+            //     credentials: 'include',
+            //     mode: 'cors',
+            // })
+
+        };
+
+        // Button to submit and trigger the actual submission process to the mongoDB
+        const create = document.getElementById('new');
+        create.addEventListener('click', createTest);
+
+        document.addEventListener("DOMContentLoaded", initialize);
+    </script>
+</html>

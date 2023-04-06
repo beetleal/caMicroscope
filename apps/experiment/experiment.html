@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .container {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            width: 100%;
+            height: 460px;
+            padding: 0;
+            margin: 0;
+        }
+        .panel {
+            display: flex;
+            background-color:rgb(215, 212, 212);
+            padding: 20px;
+        }
+        .coordinates {
+            display: flex;
+        }
+        .panel-child {
+            padding-left: 30px;
+            flex: 1;
+        }
+        .panel-child:first-child {
+            display: flex;
+            margin-right: 200px;
+        }
+        .panel-child:nth-child(3) {
+            margin-right: 30px;
+        }
+        .panel-child:last-child {
+            display: flex;
+        }
+        .btn_reg {
+            /* border-radius: 8px; */
+            /* background-color: #b6d4f5;  */
+            /* border:1px solid black; */
+            border:2px solid rgb(95, 202, 255);
+            font-size: 14px;
+            padding: 5px;
+        }
+        .btn_reg:hover {
+            /* background-color: rgb(129, 174, 222); */
+            box-shadow: inset 6.7em 0 0 0 rgb(95, 202, 255);
+        }
+        .btn_other {
+            /* border-radius: 8px; */
+            border:2px solid rgb(250, 172, 55); 
+            /* border:1px solid black; */
+            font-size: 14px;
+            /* text-align: center; */
+            padding: 5px;
+            width: 100%;
+        }
+        .btn_other:hover {
+            box-shadow: inset 10em 0 0 0 rgb(250, 172, 55); 
+        }
+
+        .btn_escape {
+            /* border-radius: 8px; */
+            font-size: 14px;
+            /* text-align: center; */
+            padding: 5px;
+            border:1px solid black;
+        }
+        .btn_escape:first-child {
+            /* border-radius: 8px; */
+            border:2px solid #79c347; 
+            font-size: 14px;
+        }
+        .btn_escape:first-child:hover {
+            /* color: #fff; */
+            box-shadow: inset 10em 0 0 0 #79c347;
+        }
+        .btn_escape:last-child {
+            /* border-radius: 8px; */
+            border:2px solid rgb(210, 39, 39); 
+            font-size: 14px;
+        }
+        .btn_escape:last-child:hover {
+            /* color: #fff; */
+            box-shadow: inset 10em 0 0 0 rgb(210, 39, 39);
+        }
+
+    </style>
+  </head>
+  <body>
+
+    <div class="container">
+      <h2>Experiment: {experiment_name}</h2> <!-- maybe insert experiment name -->
+      <!-- <p>This is some text.</p> -->
+      <br><br><h3>{insert slide here}</h3>
+    </div>
+    <div class="panel">
+        <div class="panel-child tasks">
+            <div class="labels">
+                <br>
+                <pre style="background-color:rgb(215, 212, 212); border-color:rgb(215, 212, 212)">ROI:   </pre>
+                <pre style="background-color:rgb(215, 212, 212); border-color:rgb(215, 212, 212)">WSI:   </pre>
+            </div>
+            <div class="coordinates">
+                <div class="x">
+                    <label for="WSI-x">X-coordinate:</label>
+                    <input type="text" id="WSI-x" placeholder="not set"><br><br>
+                    <!-- <br style="content: ''; line-height:75px"> -->
+                    not set
+                </div>
+                <div class="y">
+                    <label for="WSI-x">Y-coordinate:</label>
+                    <input type="text" id="WSI-y" placeholder="not set"><br><br>
+                    <!-- <br style="content: ''; line-height:75px"> -->
+                    not set
+                </div>
+            </div>
+        </div>
+        <div class="panel-child registration">
+            <div class="btn-group-vertical">
+                <button type="button" class="btn_reg">Best Register</button><br><br>
+                <button type="button" class="btn_reg">Fast Register</button>
+            </div>
+        </div>
+        <div class="panel-child others">
+            <div class="btn-group-vertical">
+                <button type="button" class="btn_other">Video</button><br><br>
+                <button type="button" class="btn_other">Hide Reticle</button><br><br>
+                <button type="button" class="btn_other">Reset</button><br><br>
+                <button type="button" class="btn_other">Pause</button><br><br>
+                <button type="button" class="btn_other">Resume</button>
+            </div>
+        </div>
+        <div class="panel-child escape">
+            <!-- <button type="button" class="btn btn-default">Back</button><br><br> -->
+            <div class="btn-group-vertical">
+                <button id= "training" type="button" class="btn_escape" onclick="location.href='../training/select_training.html';">Go to Training</button><br><br>
+                <button type="button" class="btn_escape">Abort</button>
+            </div>
+        </div>
+    </div>
+
+    </body>
+    <!-- <script type="text/javascript" src="./experiment.js"></script> -->
+</html>

@@ -242,7 +242,10 @@
         const btns = card.querySelectorAll("button");
         btns[0].addEventListener("click", (e) => {
           // Pop up window with confirmation message of whether or not to delete
-          
+          if (confirm("Are you sure you want to delete this batch from the collection list?")) //returns true if user clicked OK
+          {
+            //delete batch from collection list
+          }
           // window.location.href = `../table.html`;
           // redirect('../table.html', e.message, 0);
         });
@@ -252,6 +255,20 @@
         });
         return card;
       }
+
+      /**
+     * This function communicates with the mongoDB to delete the copy of the slide specified by 'slide' 
+     * from the specified batch 
+     *
+     * @param {string} batch | the unique id of the desired collection/batch in mongoDB
+     * @param {string} slide | the unique id (in mongoDB) of the desired slide to be deleted 
+     * from the specified batch
+     * 
+     * 
+    */
+    function deleteSlideFromDB(batch, slide){
+
+    }
 
       async function initialize() {
         var data = await store.getAllCollection();
