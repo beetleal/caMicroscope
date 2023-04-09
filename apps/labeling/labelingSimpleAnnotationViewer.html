@@ -345,6 +345,7 @@
           </div>
         </div>
         <table id="datatables"></table>
+        <!-- <h1 id="hi">hi</h1> -->
       </div>
     </div>
   </body>
@@ -418,13 +419,15 @@
               const btn =
                 labelingAnnotationCount == labelingCount
                   ? `<div class='material-icons' style='width:48px;color:#008000;' title='Done'>check_circle</div>`
-                  : `<button class="btn" data-id='${rs[0]}' onclick='openView(this)'>Open</button> <button class="delete_btn" data-id='${rs[0]}' onclick='deleteSlide(this)'>Delete</button>`;
-              rs.push(btn);
+                  : `<button class="btn" data-id='${rs[0]}' onclick='openView(this)'>Open</button>`;
+              const del_btn = `<button class="delete_btn" data-id='${rs[0]}' onclick='deleteSlide(this)'>Delete</button>`;
+              rs.push(btn, del_btn);
               return rs;
             })
             .sort((a, b) => a[5] - b[5]);
 
           const headings = HeadMapping.map((d) => d.title);
+          headings.push("");
           headings.push("");
           dataTableInstance = new DataTable("#datatables", {
             perPage: 50,
@@ -476,8 +479,81 @@
       if (oid) {
         if (confirm("Are you sure you want to delete this slide from this batch?")) //returns true if user clicked OK
         {
-          
-          //delete slide
+          // The process below communicates with the mongoDB through a series of steps.
+          // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
+
+          // Find and delete the entries in "labeling" that correspond to the slide ID 
+          const suffix = 'Labeling/find';
+          const url = ' http://localhost:4010/data/' + suffix;
+        
+          // building the query request
+          const query = {
+              // Id of the slide to be deleted
+              'provenance.image.slide' : oid,
+          };
+
+          // run the actual request, in this case a GET
+          fetch(url + '?' + objToParamStr(query), {
+              method: 'GET',
+              mode: 'cors',
+          })
+          .then((res) => {
+            return res.json();
+          })
+          .then((d) => {
+            // entries = []
+            d.forEach( function(item, index){
+              // entries += item._id.$oid + ',\n';
+              const suffix1 = 'Labeling/deleteROI';
+              const url1 = ' http://localhost:4010/data/' + suffix1;
+              const query_1 = {
+                            // Id of the slide to be deleted
+                            // 'provenance.image.slide' : oid,
+                            "id" : item._id.$oid,
+                        };
+              fetch(url1 + '?' + objToParamStr(query_1), {
+                  method: 'DELETE',
+                  // credentials: 'include',
+                  // mode: 'cors',
+                  // body: JSON.stringify(query_1),
+              })
+            })
+            // document.getElementById("hi").innerHTML = entries;
+          });
+      
+          // const suffix1 = 'Labeling/deleteROI';
+          // const url1 = ' http://localhost:4010/data/' + suffix1;
+          // const query_1 = {
+          //               // Id of the slide to be deleted
+          //               'provenance.image.slide' : oid,
+          //           };
+          // fetch(url1, {
+          //     method: 'DELETE',
+          //     credentials: 'include',
+          //     mode: 'cors',
+          //     body: JSON.stringify(query_1),
+          // }).then(res => {
+          //   res.json();
+          // });
+          //Delete the slide
+          const suffix2 = 'Slide/delete';
+          const url2 = ' http://localhost:4010/data/' + suffix2;
+          const query_2 = {
+                        // Id of the slide to be deleted
+                        '_id':  oid,
+                    };
+          fetch(url2 + '?' + objToParamStr(query_2), {
+              method: 'DELETE',
+              credentials: 'include',
+              mode: 'cors',
+          });
+
+          // ).then(d =>
+          //     // use the object id returned by the post request, will correspond to the ObjectId of the 
+          //     // new collection in mongoDB
+          //     processSlideIDs(d.ops[0]._id)
+          // );
+          alert( 'Slide \''+ oid + '\' has been deleted. Refresh the page to see updated batch.');
         }
       } else {
         alert("No Data Id");

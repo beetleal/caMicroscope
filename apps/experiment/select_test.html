@@ -351,7 +351,7 @@
                     </div>
                     <button id="previous" type="button"> Continue </button><br><br> 
                     <div class="create_test">
-                      <h2>Create a New Test</h2>
+                      <h2 id="create">Create a New Test</h2>
                       <input type="text" id="test_name" placeholder="Test Name (new)">
                     </div>
                     <button id="new" type="button"> Create</button>
@@ -377,6 +377,10 @@
 
         // Defining the table columns
         const HeadMapping = [
+            {
+                title: "Batch Id",
+                field: "id",
+            },
             {
                 title: "Batch Name",
                 field: "name",
@@ -404,6 +408,7 @@
                     headings.push("");
                     const data = collection_list.map((batch) => {
                         const rs = [];
+                        rs.push(batch._id.$oid);
                         rs.push(batch.name);
                         rs.push(batch.description);
 
@@ -509,25 +514,58 @@
                 return;
             }
             
-            //Checks to make sure that test name doesn't already exist in tests list 
-            // for (var i = 0; i < collections.length; i++){
-            //     if (collections[i].name == batch_name){
-            //         alert( 'Batch with inputted name already exists.');
-            //         return;
-            //     }
-            // }
+            var exp_collection = [];
+            const suffix_find = 'Experiment/find';
+            const url_find = ' http://localhost:4010/data/' + suffix_find;
+          
+            // empty query request
+            const query = {};
+
+            // run the actual request, in this case a GET
+            fetch(url_find + '?' + objToParamStr(query), {
+                method: 'GET',
+                mode: 'cors',
+            })
+            .then((res) => {
+              return res.json();
+            })
+            .then((d) => {
+              // document.getElementById('create').innerHTML = d;
+              d.forEach( function(item, index){
+                // document.getElementById('create').innerHTML = item;
+                exp_collection.append(item);
+              })
+            })
+            document.getElementById('create').innerHTML = exp_collection.length;
+            
+            // Checks to make sure that test name doesn't already exist in tests list 
+            for (var i = 0; i < exp_collection.length; i++){
+                if (exp_collection[i].name == test_name){
+                    alert( 'Test with inputted name already exists.');
+                    return;
+                }
+            }
 
             // The process below communicates with the mongoDB through a series of steps.
             // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
-            // const suffix = 'experiment/addTest'; // TODO: create this path
-            // const url = ' http://localhost:4010/data/' + suffix;
-            // fetch(url, {
-            //     method: 'POST',
-            //     mode: 'cors',
-            //     body: JSON.stringify({
-            //         'name' : test_name,
-            //     }),
-            // }).then(res => 
+            const suffix = 'Experiment/addTest'; // TODO: create this path
+            const url = ' http://localhost:4010/data/' + suffix;
+            //building the query request
+            const query1 = {
+                // name of the new test created to which batches will be added
+                'test' : test_name,
+                // array of the id's of the batches we want to add
+                'batches': Array.from(batchesToAdd),
+                // // this was the hardcoded global collection id from above
+                // 'all_batch' : cid,
+            };
+            fetch(url + '?' + objToParamStr(query1), {
+                method: 'POST',
+                credentials: 'include',
+                mode: 'cors',
+            })
+
+            // .then(res => 
             //     res.json()
             // ).then(d =>
             //     // use the object id returned by the post request, will correspond to the ObjectId of the 
@@ -543,12 +581,13 @@
         *
         * @param {string} test | the unique id of the desired test in mongoDB
         */
-        function processBatchIDs(test){
-            //call addToTest on every batchID found
-            for(let batch of batchesToAdd ){
-                addBatchToDB(test, batch);
-            }
-        }
+        // function processBatchIDs(test){
+        //     //call addToTest on every batchID found
+        //     // for(let batch of batchesToAdd ){
+        //     //     addBatchToDB(test, batch);
+        //     // }
+        //     addBatchesToDB(test, (Array.from(batchesToAdd)).join(", "));
+        // }
 
         /**
          * This function communicates with the mongoDB to add the batch specified by 'batch' 
@@ -560,33 +599,32 @@
          * 
          * 
         */
-        function addBatchToDB(test, batch) {
+        // function addBatchesToDB(test, batches) {
 
-            // The process below communicates with the mongoDB through a series of steps.
-            // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
-            // This will duplicate the specified slides. 
-            // NOTE: TODO: ABOVE IS INCORRECT FOR THIS!!!!!!!!!! NOT DUPLICATING, JUST ADDING THE BATCH TO THE TEST
-            // const suffix = 'experiment/add';
-            // const url = ' http://localhost:4010/data/' + suffix;
+        //     // The process below communicates with the mongoDB through a series of steps.
+        //     // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
+        //     // This will add the specified batches. 
+        //     const suffix = 'Experiment/addTest';
+        //     const url = ' http://localhost:4010/data/' + suffix;
 
-            // // building the query request
-            // const query = {
-            //     // id of the batch we want to add
-            //     '_id': batch,
-            //     // name of the new test created to which batch will be added
-            //     'test' : test,
-            //     // // this was the hardcoded global collection id from above
-            //     // 'all_batch' : cid,
-            // };
+        //     // building the query request
+        //     const query = {
+        //         // name of the new test created to which batch will be added
+        //         'test' : test,
+        //         // array of the id's of the batches we want to add
+        //         'batches': batches,
+        //         // // this was the hardcoded global collection id from above
+        //         // 'all_batch' : cid,
+        //     };
 
-            // // run the actual request, in this case a GET
-            // fetch(url + '?' + objToParamStr(query), {
-            //     method: 'GET',
-            //     credentials: 'include',
-            //     mode: 'cors',
-            // })
+        //     // run the actual request, in this case a GET
+        //     fetch(url + '?' + objToParamStr(query), {
+        //         method: 'POST',
+        //         credentials: 'include',
+        //         mode: 'cors',
+        //     })
 
-        };
+        // };
 
         // Button to submit and trigger the actual submission process to the mongoDB
         const create = document.getElementById('new');
