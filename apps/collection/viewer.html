@@ -199,6 +199,7 @@
           </div>
         </div>
         <table id="datatables"></table>
+        <!-- <h1 id="hi">hi</h1> -->
       </div>
     </div>
     <div id="card-container" class="card-grid"></div>
@@ -244,6 +245,8 @@
           // Pop up window with confirmation message of whether or not to delete
           if (confirm("Are you sure you want to delete this batch from the collection list?")) //returns true if user clicked OK
           {
+            deleteBatchFromDB(d._id.$oid);
+            alert( 'Batch \''+ d.name + '\' has been deleted. Refresh the page to see updated collection list.');
             //delete batch from collection list
           }
           // window.location.href = `../table.html`;
@@ -257,18 +260,92 @@
       }
 
       /**
-     * This function communicates with the mongoDB to delete the copy of the slide specified by 'slide' 
-     * from the specified batch 
-     *
-     * @param {string} batch | the unique id of the desired collection/batch in mongoDB
-     * @param {string} slide | the unique id (in mongoDB) of the desired slide to be deleted 
-     * from the specified batch
-     * 
-     * 
-    */
-    function deleteSlideFromDB(batch, slide){
+       * This function communicates with the mongoDB to delete the copy of the slide specified by 'slide' 
+       * from the specified batch 
+       *
+       * @param {string} batch | the unique id of the desired collection/batch in mongoDB
+       * from the specified batch
+       * 
+       * 
+      */
+      async function deleteBatchFromDB(batch){
 
-    }
+        /*DELETING SLIDES BELONGING TO THE BATCH*/
+        const slides = await store.findSlideLabelingStat(batch, getUserId());
+        // slides_arr = []
+        slides.forEach( function(item, index){
+          // slide id
+          // slides_arr += item._id + ",\n";
+          var oid = item._id;
+
+          // Find and delete the entries in "labeling" that correspond to the slide ID 
+          const suffix = 'Labeling/find';
+          const url = ' http://localhost:4010/data/' + suffix;
+        
+          // building the query request
+          const query = {
+              // Id of the slide to be deleted
+              'provenance.image.slide' : oid,
+          };
+
+          // run the actual request, in this case a GET
+          fetch(url + '?' + objToParamStr(query), {
+              method: 'GET',
+              mode: 'cors',
+          })
+          .then((res) => {
+            return res.json();
+          })
+          .then((d) => {
+            // entries = []
+            d.forEach( function(item, index){
+              // entries += item._id.$oid + ',\n';
+              const suffix1 = 'Labeling/deleteROI';
+              const url1 = ' http://localhost:4010/data/' + suffix1;
+              const query_1 = {
+                            // Id of the slide to be deleted
+                            // 'provenance.image.slide' : oid,
+                            "id" : item._id.$oid,
+                        };
+              fetch(url1 + '?' + objToParamStr(query_1), {
+                  method: 'DELETE',
+                  // credentials: 'include',
+                  // mode: 'cors',
+                  // body: JSON.stringify(query_1),
+              })
+            })
+            // document.getElementById("hi").innerHTML = entries;
+          });
+      
+          //Delete the slide
+          const suffix2 = 'Slide/delete';
+          const url2 = ' http://localhost:4010/data/' + suffix2;
+          const query_2 = {
+                        // Id of the slide to be deleted
+                        '_id':  oid,
+                    };
+          fetch(url2 + '?' + objToParamStr(query_2), {
+              method: 'DELETE',
+              credentials: 'include',
+              mode: 'cors',
+          });
+        });
+        // document.getElementById("hi").innerHTML = slides_arr;
+
+        /* DELETING BATCH FROM COLLECTIONS LIST*/
+        const suffix3 = 'Collection/delete';
+        const url3 = ' http://localhost:4010/data/' + suffix3;
+        const query_3 = {
+                      // Id of the batch to be deleted
+                      '_id':  batch,
+                  };
+        fetch(url3 + '?' + objToParamStr(query_3), {
+            method: 'DELETE',
+            credentials: 'include',
+            mode: 'cors',
+        });
+
+      }
 
       async function initialize() {
         var data = await store.getAllCollection();

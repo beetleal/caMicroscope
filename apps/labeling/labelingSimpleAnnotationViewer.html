@@ -521,20 +521,6 @@
             // document.getElementById("hi").innerHTML = entries;
           });
       
-          // const suffix1 = 'Labeling/deleteROI';
-          // const url1 = ' http://localhost:4010/data/' + suffix1;
-          // const query_1 = {
-          //               // Id of the slide to be deleted
-          //               'provenance.image.slide' : oid,
-          //           };
-          // fetch(url1, {
-          //     method: 'DELETE',
-          //     credentials: 'include',
-          //     mode: 'cors',
-          //     body: JSON.stringify(query_1),
-          // }).then(res => {
-          //   res.json();
-          // });
           //Delete the slide
           const suffix2 = 'Slide/delete';
           const url2 = ' http://localhost:4010/data/' + suffix2;
@@ -548,11 +534,6 @@
               mode: 'cors',
           });
 
-          // ).then(d =>
-          //     // use the object id returned by the post request, will correspond to the ObjectId of the 
-          //     // new collection in mongoDB
-          //     processSlideIDs(d.ops[0]._id)
-          // );
           alert( 'Slide \''+ oid + '\' has been deleted. Refresh the page to see updated batch.');
         }
       } else {
