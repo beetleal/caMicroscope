@@ -530,13 +530,10 @@
               return res.json();
             })
             .then((d) => {
-              // document.getElementById('create').innerHTML = d;
               d.forEach( function(item, index){
-                // document.getElementById('create').innerHTML = item;
                 exp_collection.append(item);
               })
             })
-            document.getElementById('create').innerHTML = exp_collection.length;
             
             // Checks to make sure that test name doesn't already exist in tests list 
             for (var i = 0; i < exp_collection.length; i++){
@@ -548,83 +545,24 @@
 
             // The process below communicates with the mongoDB through a series of steps.
             // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
-            const suffix = 'Experiment/addTest'; // TODO: create this path
-            const url = ' http://localhost:4010/data/' + suffix;
-            //building the query request
-            const query1 = {
-                // name of the new test created to which batches will be added
-                'test' : test_name,
-                // array of the id's of the batches we want to add
-                'batches': Array.from(batchesToAdd),
-                // // this was the hardcoded global collection id from above
-                // 'all_batch' : cid,
-            };
-            fetch(url + '?' + objToParamStr(query1), {
-                method: 'POST',
-                credentials: 'include',
-                mode: 'cors',
-            })
-
-            // .then(res => 
-            //     res.json()
-            // ).then(d =>
-            //     // use the object id returned by the post request, will correspond to the ObjectId of the 
-            //     // new test in mongoDB
-            //     processBatchIDs(d.ops[0]._id)
-            // );
+            // For each batch, adds document in experiment collection
+            Array.from(batchesToAdd).forEach( function(item, index){    
+              const suffix = 'Experiment/addTest'; 
+              const url = ' http://localhost:4010/data/' + suffix;
+              
+              fetch(url, {
+                  method: 'POST',
+                  credentials: 'include',
+                  mode: 'cors',
+                  body: JSON.stringify({
+                      'id' : test_name,
+                      'batch': item //batch id
+                  }),
+              });
+            });
+            
             alert( 'Test \''+ test_name + '\' has been created. Refresh the page to see new batches.');
         }
-
-        /*!
-        * This function will iterate through all of the elements of the batchesToAdd global set
-        * It will call addBatchToDB on each element
-        *
-        * @param {string} test | the unique id of the desired test in mongoDB
-        */
-        // function processBatchIDs(test){
-        //     //call addToTest on every batchID found
-        //     // for(let batch of batchesToAdd ){
-        //     //     addBatchToDB(test, batch);
-        //     // }
-        //     addBatchesToDB(test, (Array.from(batchesToAdd)).join(", "));
-        // }
-
-        /**
-         * This function communicates with the mongoDB to add the batch specified by 'batch' 
-         * and adds it to the specified test 
-         *
-         * @param {string} test | the unique id of the desired test in mongoDB
-         * @param {string} batch | the unique id (in mongoDB) of the desired batch to be added 
-         * to the specified test
-         * 
-         * 
-        */
-        // function addBatchesToDB(test, batches) {
-
-        //     // The process below communicates with the mongoDB through a series of steps.
-        //     // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
-        //     // This will add the specified batches. 
-        //     const suffix = 'Experiment/addTest';
-        //     const url = ' http://localhost:4010/data/' + suffix;
-
-        //     // building the query request
-        //     const query = {
-        //         // name of the new test created to which batch will be added
-        //         'test' : test,
-        //         // array of the id's of the batches we want to add
-        //         'batches': batches,
-        //         // // this was the hardcoded global collection id from above
-        //         // 'all_batch' : cid,
-        //     };
-
-        //     // run the actual request, in this case a GET
-        //     fetch(url + '?' + objToParamStr(query), {
-        //         method: 'POST',
-        //         credentials: 'include',
-        //         mode: 'cors',
-        //     })
-
-        // };
 
         // Button to submit and trigger the actual submission process to the mongoDB
         const create = document.getElementById('new');

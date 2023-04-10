@@ -304,7 +304,6 @@
               const url1 = ' http://localhost:4010/data/' + suffix1;
               const query_1 = {
                             // Id of the slide to be deleted
-                            // 'provenance.image.slide' : oid,
                             "id" : item._id.$oid,
                         };
               fetch(url1 + '?' + objToParamStr(query_1), {
