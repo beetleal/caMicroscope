@@ -522,7 +522,7 @@
             const query = {};
 
             // run the actual request, in this case a GET
-            fetch(url_find + '?' + objToParamStr(query), {
+            await fetch(url_find + '?' + objToParamStr(query), {
                 method: 'GET',
                 mode: 'cors',
             })
@@ -531,13 +531,13 @@
             })
             .then((d) => {
               d.forEach( function(item, index){
-                exp_collection.append(item);
-              })
-            })
+                exp_collection.push(item);
+              });
+            });
             
             // Checks to make sure that test name doesn't already exist in tests list 
             for (var i = 0; i < exp_collection.length; i++){
-                if (exp_collection[i].name == test_name){
+                if (exp_collection[i].id == test_name){
                     alert( 'Test with inputted name already exists.');
                     return;
                 }
