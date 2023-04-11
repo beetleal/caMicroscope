@@ -414,8 +414,7 @@
                   return res.json();
                 })
                 .then((d) => {
-                  // document.getElementById("create").innerHTML = d;
-                  Array.from(d).forEach( function(item, index){
+                  d.forEach( function(item, index){
                     exp_collection.push(item);
                   });
                 });
@@ -451,7 +450,7 @@
                 else {
                     console.log(collection_list);
                     // error
-                    alert(`There Is A Error On Server Side. (${collection_list.length})`);
+                    alert(`There Is A Error On Server Side. (${collection_list})`);
                     // window.location.href = "../collection/viewer.html";
                 }
             }
@@ -537,30 +536,9 @@
                 return;
             }
             
-            // var exp_collection = [];
-            // const suffix_find = 'Experiment/find';
-            // const url_find = ' http://localhost:4010/data/' + suffix_find;
-          
-            // // empty query request
-            // const query = {};
-
-            // // run the actual request, in this case a GET
-            // await fetch(url_find + '?' + objToParamStr(query), {
-            //     method: 'GET',
-            //     mode: 'cors',
-            // })
-            // .then((res) => {
-            //   return res.json();
-            // })
-            // .then((d) => {
-            //   d.forEach( function(item, index){
-            //     exp_collection.push(item);
-            //   });
-            // });
-            
             // Checks to make sure that test name doesn't already exist in tests list 
             for (var i = 0; i < exp_collection.length; i++){
-                if (exp_collection[i].id == test_name){
+                if (exp_collection[i].name == test_name){
                     alert( 'Test with inputted name already exists.');
                     return;
                 }
@@ -569,20 +547,6 @@
             // The process below communicates with the mongoDB through a series of steps.
             // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
             // Adds document in experiment collection with test_name and array of batches' id's
-            // Array.from(batchesToAdd).forEach( function(item, index){    
-            //   const suffix = 'Experiment/addTest'; 
-            //   const url = ' http://localhost:4010/data/' + suffix;
-              
-            //   fetch(url, {
-            //       method: 'POST',
-            //       credentials: 'include',
-            //       mode: 'cors',
-            //       body: JSON.stringify({
-            //           'id' : test_name,
-            //           'batch': item //batch id
-            //       }),
-            //   });
-            // });
             const suffix = 'Experiment/addTest'; 
             const url = ' http://localhost:4010/data/' + suffix;
             
@@ -591,17 +555,65 @@
                 credentials: 'include',
                 mode: 'cors',
                 body: JSON.stringify({
-                    'id' : test_name,
+                    'name' : test_name,
                     'batch': Array.from(batchesToAdd) //batch id's
                 }),
-            });
+            })
+            .then((res) => {
+              return res.json();
+            })
+            .then((d) => {
+              // use the object id returned by the post request, will correspond to the ObjectId of the 
+              // collection in mongoDB
+              window.location.href = `./experiment.html?testId=${d.ops[0]._id}`;
+            })
             
-            alert( 'Test \''+ test_name + '\' has been created. Refresh the page to see new batches.');
+            // alert( 'Test \''+ test_name + '\' has been created. Refresh the page to see new batches.');
         }
 
-        // function continueTest(e){
+        function continueTest(e){
+          // get values in HTML text areas
+          const test_name = document.getElementById('search_test').value;
 
-        // }
+          if (test_name == ""){
+            alert( 'Input test name.');
+            return;
+          }
+          //Checks to make sure that test name is in exp_collection
+          var i = 0;
+          while (exp_collection[i].name != test_name){
+            i += 1;
+            if (i >= exp_collection.length){
+              alert(" Please type valid test name or create new test.");
+              return;
+            }
+          }
+
+          // The process below communicates with the mongoDB through a series of steps.
+          // routes.json in Distro and Caracal reflect a route with the same name as the suffix below
+          const suffix = 'Experiment/find';
+          const url = ' http://localhost:4010/data/' + suffix;
+        
+          // building the query request
+          const query = {
+              // name of the test
+              'name': test_name,
+          };
+
+          // run the actual request, in this case a GET
+          fetch(url + '?' + objToParamStr(query), {
+              method: 'GET',
+              mode: 'cors',
+          })
+          .then((res) => {
+            return res.json();
+          })
+          .then((d) => {
+            // use the object id returned by the post request, will correspond to the ObjectId of the 
+            // collection in mongoDB
+            window.location.href = `./experiment.html?testId=${d[0]._id.$oid}`;
+          })
+        }
 
         const input = document.querySelector('#search_test');
         const suggestions = document.querySelector('.suggestions ul');
@@ -614,8 +626,8 @@
           let results_arr = []
           const val = target.toLowerCase();
           exp_collection.forEach(c => {
-              if (c.id.toLowerCase().indexOf(val) > -1){
-                results_arr.push(c.id);
+              if (c.name.toLowerCase().indexOf(val) > -1){
+                results_arr.push(c.name);
               }
           });
           return results_arr;
@@ -664,8 +676,8 @@
         const create = document.getElementById('new');
         create.addEventListener('click', createTest);
 
-        // const previous = document.getElementById('previous');
-        // previous.addEventListener('click', continueTest);
+        const previous = document.getElementById('previous');
+        previous.addEventListener('click', continueTest);
 
         const search_input = document.getElementById('search_test');
         search_input.addEventListener('input', searchHandler);
