@@ -7,7 +7,8 @@
         .container {
             font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
             width: 100%;
-            height: 460px;
+            /* height: 100%; */
+            height: 450px;
             padding: 0;
             margin: 0;
         }
@@ -20,15 +21,24 @@
             display: flex;
         }
         .panel-child {
-            padding-left: 30px;
-            flex: 1;
+            padding-left: 5px;
+            /* flex: 1; */
         }
         .panel-child:first-child {
+            /* display: flex; */
+            margin-right: 40px;
             display: flex;
-            margin-right: 200px;
+            height:230px;
+            width: 55%;
+            overflow:scroll;
+        }
+        .panel-child:nth-child(2) {
+            margin-right: 30px;
+            display: flex;
         }
         .panel-child:nth-child(3) {
             margin-right: 30px;
+            display: flex;
         }
         .panel-child:last-child {
             display: flex;
@@ -84,6 +94,47 @@
             box-shadow: inset 10em 0 0 0 rgb(210, 39, 39);
         }
 
+        .slider {
+            -webkit-appearance: none;
+            width: 50%;
+            height: 10px;
+            background: white;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        /* .slider:hover {
+            opacity: 1;
+        } */
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            background: #67a28c;
+            cursor: pointer;
+        }
+
+        /* .slider::-moz-range-thumb {
+            width: 25px;
+            height: 25px;
+            background: #04AA6D;
+            cursor: pointer;
+        } */
+
+        pre{
+            margin-bottom: 0px;
+        }
+
+        .next_button {
+            float: right;
+            font-size: 14px;
+            padding: 5px;
+            width: 80px;
+        }
     </style>
   </head>
   <body>
@@ -95,24 +146,60 @@
     </div>
     <div class="panel">
         <div class="panel-child tasks">
-            <div class="labels">
+            <!-- <div class="labels">
                 <br>
                 <pre style="background-color:rgb(215, 212, 212); border-color:rgb(215, 212, 212)">ROI:   </pre>
                 <pre style="background-color:rgb(215, 212, 212); border-color:rgb(215, 212, 212)">WSI:   </pre>
-            </div>
-            <div class="coordinates">
+            </div> -->
+            <!-- <div class="coordinates">
                 <div class="x">
                     <label for="WSI-x">X-coordinate:</label>
                     <input type="text" id="WSI-x" placeholder="not set"><br><br>
-                    <!-- <br style="content: ''; line-height:75px"> -->
-                    not set
-                </div>
-                <div class="y">
+                    <!-<br style="content: ''; line-height:75px"> -->
+                    <!-- not set -->
+                <!-- </div> -->
+                <!-- <div class="y">
                     <label for="WSI-x">Y-coordinate:</label>
                     <input type="text" id="WSI-y" placeholder="not set"><br><br>
-                    <!-- <br style="content: ''; line-height:75px"> -->
+                    <br style="content: ''; line-height:75px">
                     not set
-                </div>
+                </div> -->
+            <!-- </div> -->
+            <div>
+                Task __ of __ <br><br>
+                1. How would you label this ROI?
+                <table width=500>
+                    <tbody>
+                      <tr>
+                        <td><input type="radio" name="label" id="intra-tumoral" value="intra-tumoral" onclick="EnableDisableNext()"></td>
+                        <td width="30%">Intra-tumoral Stroma</td>
+                        <td><input type="radio" name="label" id="tumor-with-no" value="tumor-with-no" onclick="EnableDisableNext()"></td>
+                        <td width="40%">Tumor with No Intervening Stroma</td>
+                        <td><input type="radio" name="label" id="invasive-margin" value="invasive-margin" onclick="EnableDisableNext()"></td>
+                        <td width="15%">Invasive margin</td>
+                        <td><input type="radio" name="label" id="other" value="other"></td>
+                        <td width="15%">Other Regions</td>
+                      </tr>
+                    </tbody>
+                </table><br>
+                2. Is this ROI appropriate to evaluate intra-tumoral stromal TIL density?<br>
+                <tbody>
+                    <tr>
+                      <td><input type="radio" name="truefalse" id="true" value="true" onchange="EnableDisableQ3()" onclick="EnableDisableNext()"></td>
+                      <td>True</td>
+                      <td><input type="radio" name="truefalse" id="false" value="false" onchange="EnableDisableQ3()" onclick="EnableDisableNext()"></td>
+                      <td>False</td>
+                    </tr>
+                  </tbody><br><br>
+                <p id= "question3", style="color: rgb(146, 146, 146)">3. What is the intra-tumoral stromal TIL density?</p>
+                <form>
+                    <pre>0              50              100</pre>
+                    <input type="range" id="slider" name="amountRange" min="0" max="100" value="50" oninput="this.form.amountInput.value=this.value" class="slider" disabled="true"/>
+                    <input type="number" id="number" name="amountInput" min="0" max="100" value="50" oninput="this.form.amountRange.value=this.value" disabled="true"/>
+                </form>
+                <button type="button" id="next" class="next_button" disabled>Next</button><br><br>
+                <button type="button" id="next" class="next_button" disabled>Back</button>
+                
             </div>
         </div>
         <div class="panel-child registration">
@@ -140,5 +227,34 @@
     </div>
 
     </body>
+    <script>
+
+        function EnableDisableQ3(){
+            slider.disabled = selectTrue.checked ? false : true;
+            slider.style.opacity = selectTrue.checked ? 1 : 0.7;
+            slider.value = 50;
+            number.value = 50;
+            number.disabled = selectTrue.checked ? false : true;
+            question3.style.color = selectTrue.checked ? "black" : "rgb(146, 146, 146)";
+            if (slider.disabled == false){
+                slider.innerHTML = ".slider::-webkit-slider-thumb { background: 'red'; }";
+                number.disabled = false;
+            }
+        } 
+
+       function EnableDisableNext(){
+            label_checked = ele[0].checked || ele[1].checked || ele[2].checked || ele[3].checked;
+            truefalse_checked = ele[4].checked || ele[5].checked;
+            next.disabled = (label_checked && truefalse_checked) ? false : true;
+        }
+
+        var ele = document.getElementsByTagName('input');
+        var selectTrue = document.getElementById("true");
+        var question3 = document.getElementById("question3");
+        var slider = document.getElementById("slider");
+        var number = document.getElementById("number");
+        var next = document.getElementById('next');
+        
+    </script>
     <!-- <script type="text/javascript" src="./experiment.js"></script> -->
 </html>

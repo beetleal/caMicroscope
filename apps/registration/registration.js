@@ -92,12 +92,12 @@ const updateProgressbar = () => {
 
 //
 const consentChange = () =>{
-  // if (isConsent.checked) {
-  //   agreeBtn.disabled = false;
-  // } else {
-  //   agreeBtn.disabled = true;
-  // }
-  agreeBtn.disabled = false;
+  if (isConsent.checked) {
+    agreeBtn.disabled = false;
+  } else {
+    agreeBtn.disabled = true;
+  }
+  // agreeBtn.disabled = false;
 };
 
 const decline = ()=>{
