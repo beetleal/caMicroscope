@@ -53,6 +53,14 @@ async function initialize() {
         })
     })
 
+    // Randomizing the order of the slides, using the Fisher-Yates Algorithm
+    for (let i = slides.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = slides[i];
+        slides[i] = slides[j];
+        slides[j] = temp;
+    }
+
     // for all instances of UI components
     // const $UI = {};
     // let slideQuery = {};
@@ -204,6 +212,9 @@ function EnableDisableNext(){
     truefalse_c = truefalse_checked();
     
     next.disabled = (label_c && truefalse_c) ? false : true;
+    if (next.disabled == false && next.innerHTML == "Finish"){
+        next.style.border = "2px solid rgb(112, 173, 74)"; 
+    }
 }
 
 function ShowNextSlideandQs(){
@@ -213,6 +224,7 @@ function ShowNextSlideandQs(){
 
     if (next.innerHTML == "Finish"){
         Redirect();
+        return;
     }
 
     currentQuestion += 1;
@@ -220,13 +232,11 @@ function ShowNextSlideandQs(){
     if(currentQuestion == (totalQuestions-1)){
         next.innerHTML = "Finish";
     }
-    else{
-        document.getElementById("slide_" + (currentQuestion-1)).style.display = "none";
-        document.getElementById("slide_" + (currentQuestion-1) + "_questions").style.display = "none";
-        document.getElementById("slide_" + currentQuestion).style.display = "block";
-        document.getElementById("slide_" + currentQuestion + "_questions").style.display = "block";
-        back.disabled = (currentQuestion > 0) ? false : true;
-    }
+    document.getElementById("slide_" + (currentQuestion-1)).style.display = "none";
+    document.getElementById("slide_" + (currentQuestion-1) + "_questions").style.display = "none";
+    document.getElementById("slide_" + currentQuestion).style.display = "block";
+    document.getElementById("slide_" + currentQuestion + "_questions").style.display = "block";
+    back.disabled = (currentQuestion > 0) ? false : true;
 
     num += 8;
     question3_index += 1;

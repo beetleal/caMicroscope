@@ -1,205 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-        .container {
-            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-            width: 100%;
-            /* height: 100%; */
-            height: 450px;
-            padding: 0;
-            margin: 0;
-        }
-        .panel {
-            display: flex;
-            background-color:rgb(215, 212, 212);
-            padding: 20px;
-        }
-        .coordinates {
-            display: flex;
-        }
-        .panel-child {
-            padding-left: 5px;
-            /* flex: 1; */
-        }
-        .panel-child:first-child {
-            /* display: flex; */
-            margin-right: 40px;
-            display: flex;
-            height:230px;
-            width: 55%;
-            overflow:scroll;
-        }
-        .panel-child:nth-child(2) {
-            margin-right: 30px;
-            display: flex;
-        }
-        .panel-child:nth-child(3) {
-            margin-right: 30px;
-            display: flex;
-        }
-        .panel-child:last-child {
-            display: flex;
-        }
-        .btn_reg {
-            /* border-radius: 8px; */
-            /* background-color: #b6d4f5;  */
-            /* border:1px solid black; */
-            border:2px solid rgb(95, 202, 255);
-            font-size: 14px;
-            padding: 5px;
-        }
-        .btn_reg:hover {
-            /* background-color: rgb(129, 174, 222); */
-            box-shadow: inset 6.7em 0 0 0 rgb(95, 202, 255);
-        }
-        .btn_other {
-            /* border-radius: 8px; */
-            border:2px solid rgb(250, 172, 55); 
-            /* border:1px solid black; */
-            font-size: 14px;
-            /* text-align: center; */
-            padding: 5px;
-            width: 100%;
-        }
-        .btn_other:hover:not([disabled]) {
-            box-shadow: inset 10em 0 0 0 rgb(250, 172, 55); 
-        }
-
-        .btn_escape {
-            /* border-radius: 8px; */
-            font-size: 14px;
-            /* text-align: center; */
-            padding: 5px;
-            border:1px solid black;
-        }
-        .btn_escape:first-child {
-            /* border-radius: 8px; */
-            border:2px solid #79c347; 
-            font-size: 14px;
-        }
-        .btn_escape:first-child:hover {
-            /* color: #fff; */
-            box-shadow: inset 10em 0 0 0 #79c347;
-        }
-        .btn_escape:last-child {
-            /* border-radius: 8px; */
-            border:2px solid rgb(210, 39, 39); 
-            font-size: 14px;
-        }
-        .btn_escape:last-child:hover {
-            /* color: #fff; */
-            box-shadow: inset 10em 0 0 0 rgb(210, 39, 39);
-        }
-
-        .slider {
-            -webkit-appearance: none;
-            width: 50%;
-            height: 10px;
-            background: white;
-            outline: none;
-            opacity: 0.7;
-            -webkit-transition: .2s;
-            transition: opacity .2s;
-        }
-
-        /* .slider:hover {
-            opacity: 1;
-        } */
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 15px;
-            height: 15px;
-            background: #67a28c;
-            cursor: pointer;
-        }
-
-        /* .slider::-moz-range-thumb {
-            width: 25px;
-            height: 25px;
-            background: #04AA6D;
-            cursor: pointer;
-        } */
-
-        pre{
-            margin-bottom: 0px;
-        }
-
-        .next_button {
-            float: right;
-            font-size: 14px;
-            padding: 5px;
-            width: 80px;
-        }
-    </style>
-  </head>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="../../core/Store.js"></script>
+        <script src="../../common/util.js"></script>
+        <!-- <script type="text/javascript" src="../../core/CaMic.js"></script> -->
+        <style>
+            .container {
+                font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+                width: 100%;
+                height: 450px;
+                padding: 0;
+                margin: 0;
+            }
+            .panel {
+                display: flex;
+                background-color:rgb(215, 212, 212);
+                padding: 20px;
+            }
+            .coordinates {
+                display: flex;
+            }
+            .panel-child {
+                padding-left: 5px;
+            }
+            .panel-child:first-child {
+                margin-right: 40px;
+                display: flex;
+                height: 230px;
+                width: 55%;
+                overflow:scroll;
+            }
+            .panel-child:not(:first-child){
+                margin-right: 30px;
+                display: flex;
+                flex: 1;
+            }
+            .btn_reg {
+                border:2px solid rgb(95, 202, 255);
+                font-size: 14px;
+                padding: 5px;
+            }
+            .btn_reg:hover {
+                box-shadow: inset 6.7em 0 0 0 rgb(95, 202, 255);
+            }
+            .btn_other {
+                border:2px solid rgb(250, 172, 55); 
+                font-size: 14px;
+                padding: 5px;
+                width: 100%;
+            }
+            .btn_other:hover:not([disabled]) {
+                box-shadow: inset 10em 0 0 0 rgb(250, 172, 55); 
+            }
+            .btn_training {
+                font-size: 14px;
+                padding: 5px;
+                border:2px solid rgb(112, 173, 74); 
+                font-size: 14px;
+                height: auto;
+            }
+            .btn_training:hover {
+                box-shadow: inset 10em 0 0 0 rgb(112, 173, 74);
+            }
+            .btn_abort {
+                font-size: 14px;
+                padding: 5px;
+                border:2px solid rgb(210, 39, 39); 
+                font-size: 14px;
+                height: auto;
+            }
+            .btn_abort:hover {
+                box-shadow: inset 10em 0 0 0 rgb(210, 39, 39);
+            }
+            .slider {
+                -webkit-appearance: none;
+                width: 50%;
+                height: 10px;
+                background: white;
+                outline: none;
+                opacity: 0.7;
+                -webkit-transition: .2s;
+                transition: opacity .2s;
+            }
+            .slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 15px;
+                height: 15px;
+                background: #67a28c;
+                cursor: pointer;
+            }
+            pre{
+                margin-bottom: 0px;
+            }
+            .navigate_button {
+                margin-top: 10px;
+                float: right;
+                font-size: 14px;
+                padding: 5px;
+                width: 80px;
+            }
+            .navigate_button:first-child {
+                margin-top: 190px;
+            }
+        </style>
+    </head>
   <body>
 
     <div class="container">
-      <h2>Experiment: {experiment_name}</h2> <!-- maybe insert experiment name -->
-      <!-- <p>This is some text.</p> -->
-      <br><br><h3>{insert slide here}</h3>
+        <div id="slide_block">
+            <div id="slide_0"></div>
+        </div>
     </div>
     <div class="panel">
-        <div class="panel-child tasks">
-            <!-- <div class="labels">
-                <br>
-                <pre style="background-color:rgb(215, 212, 212); border-color:rgb(215, 212, 212)">ROI:   </pre>
-                <pre style="background-color:rgb(215, 212, 212); border-color:rgb(215, 212, 212)">WSI:   </pre>
-            </div> -->
-            <!-- <div class="coordinates">
-                <div class="x">
-                    <label for="WSI-x">X-coordinate:</label>
-                    <input type="text" id="WSI-x" placeholder="not set"><br><br>
-                    <!-<br style="content: ''; line-height:75px"> -->
-                    <!-- not set -->
-                <!-- </div> -->
-                <!-- <div class="y">
-                    <label for="WSI-x">Y-coordinate:</label>
-                    <input type="text" id="WSI-y" placeholder="not set"><br><br>
-                    <br style="content: ''; line-height:75px">
-                    not set
-                </div> -->
-            <!-- </div> -->
-            <div>
-                Task __ of __ <br><br>
-                1. How would you label this ROI?
-                <table width=500>
+        <div class="panel-child tasks" id="tasks">
+            <div id="questions_block">
+                <div id="task_num"></div><br>
+                <div id="slide_0_questions" name="questions">
+                    1. How would you label this ROI?
+                    <table width=500>
+                        <tbody>
+                            <tr>
+                                <td><input type="radio" name="label" id="intra-tumoral" value="intra-tumoral" onclick="EnableDisableNext()" onclick="EnableDisableBack()"></td>
+                                <td width="30%">Intra-tumoral Stroma</td>
+                                <td><input type="radio" name="label" id="tumor-with-no" value="tumor-with-no" onclick="EnableDisableNext()" onclick="EnableDisableBack()"></td>
+                                <td width="40%">Tumor with No Intervening Stroma</td>
+                                <td><input type="radio" name="label" id="invasive-margin" value="invasive-margin" onclick="EnableDisableNext()" onclick="EnableDisableBack()"></td>
+                                <td width="15%">Invasive margin (1mm)</td>
+                                <td><input type="radio" name="label" id="other" value="other"></td>
+                                <td width="15%">Other Regions</td>
+                            </tr>
+                        </tbody>
+                    </table><br>
+                    2. Is this ROI appropriate to evaluate intra-tumoral stromal TIL density?<br>
                     <tbody>
-                      <tr>
-                        <td><input type="radio" name="label" id="intra-tumoral" value="intra-tumoral" onclick="EnableDisableNext()"></td>
-                        <td width="30%">Intra-tumoral Stroma</td>
-                        <td><input type="radio" name="label" id="tumor-with-no" value="tumor-with-no" onclick="EnableDisableNext()"></td>
-                        <td width="40%">Tumor with No Intervening Stroma</td>
-                        <td><input type="radio" name="label" id="invasive-margin" value="invasive-margin" onclick="EnableDisableNext()"></td>
-                        <td width="15%">Invasive margin (1mm)</td>
-                        <td><input type="radio" name="label" id="other" value="other"></td>
-                        <td width="15%">Other Regions</td>
-                      </tr>
-                    </tbody>
-                </table><br>
-                2. Is this ROI appropriate to evaluate intra-tumoral stromal TIL density?<br>
-                <tbody>
-                    <tr>
-                      <td><input type="radio" name="truefalse" id="true" value="true" onchange="EnableDisableQ3()" onclick="EnableDisableNext()"></td>
-                      <td>True</td>
-                      <td><input type="radio" name="truefalse" id="false" value="false" onchange="EnableDisableQ3()" onclick="EnableDisableNext()"></td>
-                      <td>False</td>
-                    </tr>
-                  </tbody><br><br>
-                <p id= "question3", style="color: rgb(146, 146, 146)">3. What is the intra-tumoral stromal TIL density?</p>
-                <form>
-                    <pre>0              50              100</pre>
-                    <input type="range" id="slider" name="amountRange" min="0" max="100" value="50" oninput="this.form.amountInput.value=this.value" class="slider" disabled="true"/>
-                    <input type="number" id="number" name="amountInput" min="0" max="100" value="50" oninput="this.form.amountRange.value=this.value" disabled="true"/>
-                </form>
-                <button type="button" id="next" class="next_button" disabled>Next</button><br><br>
-                <button type="button" id="next" class="next_button" disabled>Back</button>
-                
+                        <tr>
+                        <td><input type="radio" name="truefalse" id="true" value="true" onchange="EnableDisableQ3()" onclick="EnableDisableNext()" onclick="EnableDisableBack()"></td>
+                        <td>True</td>
+                        <td><input type="radio" name="truefalse" id="false" value="false" onchange="EnableDisableQ3()" onclick="EnableDisableNext()" onclick="EnableDisableBack()"></td>
+                        <td>False</td>
+                        </tr>
+                    </tbody><br><br>
+                    <p id= "question3" name="question3" style="color: rgb(146, 146, 146)">3. What is the intra-tumoral stromal TIL density?</p>
+                    <form>
+                        <pre>0              50              100</pre>
+                        <input type="range" id="slider" name="amountRange" min="0" max="100" value="50" oninput="this.form.amountInput.value=this.value" class="slider" disabled="true"/>
+                        <input type="number" id="number" name="amountInput" min="0" max="100" value="50" oninput="this.form.amountRange.value=this.value" disabled="true"/>
+                    </form>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="next" class="navigate_button" disabled onclick="ShowNextSlideandQs()">Next</button><br><br>
+                <button type="button" id="back" class="navigate_button" disabled onclick="ShowPrevSlideandQs()">Back</button>
             </div>
         </div>
         <div class="panel-child registration">
@@ -218,43 +172,15 @@
             </div>
         </div>
         <div class="panel-child escape">
-            <!-- <button type="button" class="btn btn-default">Back</button><br><br> -->
             <div class="btn-group-vertical">
-                <button id= "training" type="button" class="btn_escape" onclick="location.href='../training/select_training.html';">Go to Training</button><br><br>
-                <button type="button" class="btn_escape">Abort</button>
+                <button id= "training" type="button" class="btn_training" onclick="location.href='../training/select_training.html?';">Go to Training</button><br><br>
+                <button id= "abort" type="button" class="btn_abort" onclick="location.href='../landing/crowd.html';">Abort</button>
+                <!-- TODO: for the above button, onclick, go back to crowd.html and save experiment answers and last slide you were on.-->
             </div>
         </div>
     </div>
 
     </body>
-    <script>
-
-        function EnableDisableQ3(){
-            slider.disabled = selectTrue.checked ? false : true;
-            slider.style.opacity = selectTrue.checked ? 1 : 0.7;
-            slider.value = 50;
-            number.value = 50;
-            number.disabled = selectTrue.checked ? false : true;
-            question3.style.color = selectTrue.checked ? "black" : "rgb(146, 146, 146)";
-            if (slider.disabled == false){
-                slider.innerHTML = ".slider::-webkit-slider-thumb { background: 'red'; }";
-                number.disabled = false;
-            }
-        } 
-
-       function EnableDisableNext(){
-            label_checked = ele[0].checked || ele[1].checked || ele[2].checked || ele[3].checked;
-            truefalse_checked = ele[4].checked || ele[5].checked;
-            next.disabled = (label_checked && truefalse_checked) ? false : true;
-        }
-
-        var ele = document.getElementsByTagName('input');
-        var selectTrue = document.getElementById("true");
-        var question3 = document.getElementById("question3");
-        var slider = document.getElementById("slider");
-        var number = document.getElementById("number");
-        var next = document.getElementById('next');
-        
-    </script>
+    <script type="text/javascript" src="./experiment.js"></script>
     <!-- <script type="text/javascript" src="./experiment.js"></script> -->
 </html>

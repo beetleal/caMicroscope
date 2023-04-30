@@ -55,6 +55,10 @@
         margin: 0;
       }
 
+      .choose_batch {
+        padding-left: 10px;
+      }
+
       /* CONTAINERS */
       .dataTable-wrapper.no-header .dataTable-container {
         border-top: 1px solid #d9d9d9;
@@ -381,7 +385,7 @@
           </div>
         </div>
         
-        <div>
+        <div class="choose_batch">
             <h1>Batch Creation or Addition</h1>
             <!-- create new batch -->
             <div class="info">
@@ -813,8 +817,7 @@
     const submit = document.getElementById('submit');
     submit.addEventListener('click', addBatch);
 
-    const search_input = document.getElementById('search_batch');
-    search_input.addEventListener('input', searchHandler);
+    input.addEventListener('input', searchHandler);
     suggestions.addEventListener('click', useSuggestion);
 
     const submit_existing = document.getElementById('submit_existing');

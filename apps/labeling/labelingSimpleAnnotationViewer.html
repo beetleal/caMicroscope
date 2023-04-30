@@ -520,6 +520,38 @@
             })
             // document.getElementById("hi").innerHTML = entries;
           });
+
+          // Find and delete the entries in "labelingAnnotation" that correspond to the slide ID 
+          const suffix3 = 'LabelingAnnotation/find';
+          const url3 = ' http://localhost:4010/data/' + suffix3;
+        
+          // building the query request
+          const query3 = {
+              // Id of the slide to be deleted
+              'provenance.image.slide' : oid,
+          };
+
+          // run the actual request, in this case a GET
+          fetch(url3 + '?' + objToParamStr(query3), {
+              method: 'GET',
+              mode: 'cors',
+          })
+          .then((res) => {
+            return res.json();
+          })
+          .then((d) => {
+            d.forEach( function(item, index){
+              const suffix4 = 'LabelingAnnotation/delete';
+              const url4 = ' http://localhost:4010/data/' + suffix4;
+              const query_4 = {
+                            // Id of the slide to be deleted
+                            "id" : item._id.$oid,
+                        };
+              fetch(url4 + '?' + objToParamStr(query_4), {
+                  method: 'DELETE',
+              })
+            })
+          });
       
           //Delete the slide
           const suffix2 = 'Slide/delete';

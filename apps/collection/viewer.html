@@ -272,10 +272,8 @@
 
         /*DELETING SLIDES BELONGING TO THE BATCH*/
         const slides = await store.findSlideLabelingStat(batch, getUserId());
-        // slides_arr = []
         slides.forEach( function(item, index){
           // slide id
-          // slides_arr += item._id + ",\n";
           var oid = item._id;
 
           // Find and delete the entries in "labeling" that correspond to the slide ID 
@@ -297,9 +295,7 @@
             return res.json();
           })
           .then((d) => {
-            // entries = []
             d.forEach( function(item, index){
-              // entries += item._id.$oid + ',\n';
               const suffix1 = 'Labeling/deleteROI';
               const url1 = ' http://localhost:4010/data/' + suffix1;
               const query_1 = {
@@ -308,12 +304,40 @@
                         };
               fetch(url1 + '?' + objToParamStr(query_1), {
                   method: 'DELETE',
-                  // credentials: 'include',
-                  // mode: 'cors',
-                  // body: JSON.stringify(query_1),
               })
             })
-            // document.getElementById("hi").innerHTML = entries;
+          });
+
+          // Find and delete the entries in "labelingAnnotation" that correspond to the slide ID 
+          const suffix3 = 'LabelingAnnotation/find';
+          const url3 = ' http://localhost:4010/data/' + suffix3;
+        
+          // building the query request
+          const query3 = {
+              // Id of the slide to be deleted
+              'provenance.image.slide' : oid,
+          };
+
+          // run the actual request, in this case a GET
+          fetch(url3 + '?' + objToParamStr(query3), {
+              method: 'GET',
+              mode: 'cors',
+          })
+          .then((res) => {
+            return res.json();
+          })
+          .then((d) => {
+            d.forEach( function(item, index){
+              const suffix4 = 'LabelingAnnotation/delete';
+              const url4 = ' http://localhost:4010/data/' + suffix4;
+              const query_4 = {
+                            // Id of the slide to be deleted
+                            "id" : item._id.$oid,
+                        };
+              fetch(url4 + '?' + objToParamStr(query_4), {
+                  method: 'DELETE',
+              })
+            })
           });
       
           //Delete the slide
@@ -329,7 +353,6 @@
               mode: 'cors',
           });
         });
-        // document.getElementById("hi").innerHTML = slides_arr;
 
         /* DELETING BATCH FROM COLLECTIONS LIST*/
         const suffix3 = 'Collection/delete';
